@@ -34,14 +34,16 @@ class Javelin {
     val partsFile = "parts.json"
     val slotsFile = "slots.json"
 
-    val slotHashMap: HashMap<String, Slot> = HashMap()
+
     val catHashMap: HashMap<String, TreeItem<Any>> = HashMap()
 
     val folderContext: ContextMenu = ContextMenu()
+    val partContext: ContextMenu = ContextMenu()
 
     companion object {
         var selectedTreeItem: TreeItem<Any>? = null
         val partHashMap: HashMap<String, Part> = HashMap()
+        val slotHashMap: HashMap<String, Slot> = HashMap()
     }
 
     private val dfPart: DataFormat = DataFormat("org.dba.javelin.Part")
@@ -139,7 +141,7 @@ class Javelin {
                                 else
                                     "-fx-text-fill: part-link-color"
                                 tooltip = Tooltip(part.code + " - " + part.hint)
-
+                                contextMenu = partContext
                             }
 
                             is Slot -> {
@@ -354,7 +356,29 @@ class Javelin {
 
             }
         }
+        val newSlot = MenuItem("create slot")
+        newSlot.setOnAction {
+            selectedTreeItem = treeViewPart.selectionModel.selectedItem
+            try {
+                val fxmlLoader = FXMLLoader(javaClass.getResource("createSlot.fxml"))
+                val slotForm: Parent = fxmlLoader.load()
+                val slotStage = Stage()
+                slotStage.title = "Create New Slot"
+                slotStage.setOnHiding {
+                    loadPartTree()
+                }
+                slotStage.scene = Scene(slotForm)
+                slotStage.show()
+            } catch (e: IOException) {
+                labelStatus.text = e.message
+                labelStatus.styleClass.clear()
+                labelStatus.styleClass.add("label-failure")
+
+            }
+        }
+
         folderContext.items.add(newPart)
+        partContext.items.add(newSlot)
     }
 
 

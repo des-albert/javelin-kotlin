@@ -1,5 +1,12 @@
 [
   {
+    "code": "S4X27A",
+    "description": "HPE Cray XD685 1.6TB NVMe Mixed Use E3.S",
+    "category": "E3.S NVMe",
+    "hint": "1.6 TB MU",
+    "slots": []
+  },
+  {
     "code": "P64986-H21",
     "description": "HPE 64GB Dual Rank x4 DDR5-6400 Smart Memory Kit",
     "category": "DDR5-6400 DIMM",
@@ -34,7 +41,8 @@
     "hint": "AMD 9655",
     "slots": [
       "Turin CPUs",
-      "DDR5-6400 DIMMs"
+      "DDR5-6400 DIMMs",
+      "NVMe Drive"
     ]
   },
   {

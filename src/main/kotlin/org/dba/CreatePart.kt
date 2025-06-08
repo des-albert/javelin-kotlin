@@ -8,7 +8,7 @@ import org.dba.Javelin.Companion.selectedTreeItem
 import org.dba.Javelin.Companion.partHashMap
 
 
-class createPart {
+class CreatePart {
     lateinit var textFieldPartCode: TextField
     lateinit var textFieldPartDescription: TextField
     lateinit var textFieldPartCat: TextField

@@ -1,5 +1,14 @@
 [
   {
+    "name": "NVMe Drive",
+    "type": "M",
+    "quantity": 8,
+    "description": "E3.S SSD NVMe Drives",
+    "parts": [
+      "S4X27A"
+    ]
+  },
+  {
     "name": "DDR5-6400 DIMMs",
     "type": "M",
     "quantity": 24,
