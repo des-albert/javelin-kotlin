@@ -1,0 +1,61 @@
+[
+  {
+    "code": "P64986-H21",
+    "description": "HPE 64GB Dual Rank x4 DDR5-6400 Smart Memory Kit",
+    "category": "DDR5-6400 DIMM",
+    "hint": "64 GB DIMM",
+    "slots": []
+  },
+  {
+    "code": "P73357-B21",
+    "description": "AMD EPYC 9655 2.6GHz 96-core 400W Processor for HPE",
+    "category": "AMD Turin CPU",
+    "hint": "AMD 9655 96c 2.6G 400W",
+    "slots": []
+  },
+  {
+    "code": "P73359-B21",
+    "description": "AMD EPYC 9535 2.4GHz 64-core 300W Processor for HPE",
+    "category": "AMD Turin CPU",
+    "hint": "AMD 9635 64c 2.4G 300W",
+    "slots": []
+  },
+  {
+    "code": "P73360-B21",
+    "description": "AMD EPYC 9555 3.2GHz 64-core 360W Processor for HPE",
+    "category": "AMD Turin CPU",
+    "hint": "9555 64c 3.3G 360W",
+    "slots": []
+  },
+  {
+    "code": "S4R96A",
+    "description": "HPE ProLiant Compute XD685 Direct Liquid Cooling Server",
+    "category": "HPE Proliant Compute XD685 Servers",
+    "hint": "AMD 9655",
+    "slots": [
+      "Turin CPUs",
+      "DDR5-6400 DIMMs"
+    ]
+  },
+  {
+    "code": "P64988-H21",
+    "description": "HPE 128GB Dual Rank x4 DDR5-6400 Smart Memory Kit",
+    "category": "DDR5-6400 DIMM",
+    "hint": "128 GB DIMM",
+    "slots": []
+  },
+  {
+    "code": "P64987-H21",
+    "description": "HPE 96GB Dual Rank x4 DDR5-6400 Smart Memory Kit",
+    "category": "DDR5-6400 DIMM",
+    "hint": "96 GB DIMM",
+    "slots": []
+  },
+  {
+    "code": "P73377-B21",
+    "description": "AMD EPYC 9575F 3.0GHz 64-core 320W Processor for HPE",
+    "category": "AMD Turin CPU",
+    "hint": "AMD 9575F 64c 3.0G 320W",
+    "slots": []
+  }
+]

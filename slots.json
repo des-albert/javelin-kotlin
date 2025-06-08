@@ -1,0 +1,25 @@
+[
+  {
+    "name": "DDR5-6400 DIMMs",
+    "type": "M",
+    "quantity": 24,
+    "description": "DDR5-6400 DIMMs",
+    "parts": [
+      "P64986-H21",
+      "P64987-H21",
+      "P64988-H21"
+    ]
+  },
+  {
+    "name": "Turin CPUs",
+    "type": "E",
+    "quantity": 2,
+    "description": "AMD Turin CPUs for Cray XD 685",
+    "parts": [
+      "P73357-B21",
+      "P73359-B21",
+      "P73377-B21",
+      "P73360-B21"
+    ]
+  }
+]

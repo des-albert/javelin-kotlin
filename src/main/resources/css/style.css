@@ -1,0 +1,55 @@
+.root {
+    -fx-base: rgba(60, 63, 65, 255);
+    status-good-color: #b8f1b8;
+    status-error-color: red;
+}
+
+.label-blue{
+    -fx-text-fill: Blue;
+    -fx-font-family: 'Ink Free';
+    -fx-font-size: 14;
+    -fx-base: rgba(60, 63, 65, 255);
+}
+.label-title {
+    -fx-text-fill: Blue;
+    -fx-font-family: 'Ink Free';
+    -fx-font-size: 48;
+    -fx-base: rgba(60, 63, 65, 255);
+}
+
+.label-red {
+    -fx-text-fill: Red;
+    -fx-font-family: 'Ink Free';
+    -fx-font-size: 16;
+    -fx-base: rgba(60, 63, 65, 255)
+}
+.label-plain {
+    -fx-text-fill: Orange;
+    -fx-font-family: 'Ink Free';
+    -fx-font-size: 16;
+    -fx-base: rgba(60, 63, 65, 255)
+}
+.button{
+    -fx-text-fill: Yellow;
+    -fx-font-family: 'Ink Free';
+    -fx-font-size: 14;
+    -fx-text-alignment: "center";
+    -fx-base: rgba(60, 63, 65, 255)
+}
+.toggle-button{
+    -fx-text-fill: #ffb66a;
+    -fx-font-family: 'Ink Free';
+    -fx-font-size: 12;
+    -fx-text-alignment: "center";
+    -fx-base: rgba(29, 57, 111, 255)
+}
+.label-success {
+    -fx-text-fill: #3cc136;
+    -fx-font-family: 'Ink Free';
+    -fx-font-size: 14;
+}
+.label-failure {
+    -fx-text-fill: #ff544b;
+    -fx-font-family: 'Ink Free';
+    -fx-font-size: 14;
+}

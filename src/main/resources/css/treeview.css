@@ -1,0 +1,29 @@
+.root {
+    -fx-base: rgba(60, 63, 65, 255);
+}
+.tree-cell {
+    folder-leaf-color: #364cff;
+    part-leaf-color: rgba(51, 234, 57, 0.87);
+    part-link-color: #f12823;
+    slot-leaf-color: #ffef6e;
+    -fx-padding: 0px;
+    -fx-indent: 8px;
+ }
+
+.tree-cell .label {
+    -fx-padding: 0px;
+}
+.tree-cell .tree-disclosure-node .arrow {
+    -fx-shape: "M 3,0 L -1,2 L -1,1 L -3,1 L -3,-1 L -1,-1 L -1,-2 z";
+    -fx-background-color: green;
+    -fx-rotate: 0;
+    -fx-base: rgba(60, 63, 65, 255);
+}
+
+.tree-cell:expanded .tree-disclosure-node .arrow {
+    -fx-shape: "M 3,0 L -1,2 L -1,1 L -3,1 L -3,-1 L -1,-1 L -1,-2 z";
+    -fx-background-color: red;
+    -fx-rotate: 90;
+    -fx-base: rgba(60, 63, 65, 255);
+}
+
