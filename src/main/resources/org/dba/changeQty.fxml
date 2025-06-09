@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="287.0" prefWidth="337.0" styleClass="root" stylesheets="@../../css/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.dba.ChangeQty">
+    <TextField fx:id="textFieldNewQuantity" layoutX="60.0" layoutY="131.0" stylesheets="@../../css/style.css" />
+    <Label fx:id="labelCurrentQuantity" layoutX="60.0" layoutY="73.0" prefHeight="17.0" prefWidth="149.0" styleClass="label-failure" stylesheets="@../../css/style.css" />
+    <Label layoutX="60.0" layoutY="42.0" prefHeight="17.0" prefWidth="136.0" styleClass="label-red" stylesheets="@../../css/style.css" text="current quantity" />
+    <Label layoutX="60.0" layoutY="98.0" prefHeight="17.0" prefWidth="136.0" styleClass="label-plain" stylesheets="@../../css/style.css" text="new quantity" />
+    <Button fx:id="buttonChangeQty" layoutX="239.0" layoutY="127.0" mnemonicParsing="false" onAction="#buttonChangeQtyAction" prefHeight="34.0" prefWidth="68.0" styleClass="button" stylesheets="@../../css/style.css" text="update" />
+    <Button fx:id="buttonChangeQtyDone" layoutX="249.0" layoutY="193.0" mnemonicParsing="false" onAction="#buttonChangeQtyDoneAction" styleClass="button" stylesheets="@../../css/style.css" text="done" />
+    <Label fx:id="labelPartCode" layoutX="60.0" layoutY="20.0" prefHeight="17.0" prefWidth="149.0" styleClass="label-plain" />
+    <Label fx:id="labelStatus" layoutX="34.0" layoutY="252.0" prefHeight="17.0" prefWidth="266.0" />
+</AnchorPane>

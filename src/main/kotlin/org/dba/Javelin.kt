@@ -26,6 +26,8 @@ import kotlin.collections.HashMap
 
 class Javelin {
 
+    lateinit var imageViewTrash: ImageView
+    lateinit var labelJavaFX: Label
     lateinit var labelStatus: Label
     lateinit var buttonQuit: Button
     lateinit var treeViewPart: TreeView<Any>
@@ -36,13 +38,12 @@ class Javelin {
     val partsFile = "parts.json"
     val slotsFile = "slots.json"
 
-
-    val catHashMap: HashMap<String, TreeItem<Any>> = HashMap()
-
     val folderContext: ContextMenu = ContextMenu()
     val partContext: ContextMenu = ContextMenu()
+    val quantityContext: ContextMenu = ContextMenu()
 
     val buildHashMap: HashMap<String, TreeItem<Any>> = HashMap()
+    val catHashMap: HashMap<String, TreeItem<Any>> = HashMap()
 
     companion object {
         var selectedTreeItem: TreeItem<Any>? = null
@@ -63,6 +64,7 @@ class Javelin {
     @FXML
     fun initialize() {
         labelJDK.text = "Java SDK %s".format(System.getProperty("java.version"))
+        labelJavaFX.text = "JavaFX version %s".format(System.getProperty("javafx.runtime.version"))
 
         definePartsTreeView()
         defineBuildTreeView()
@@ -251,6 +253,7 @@ class Javelin {
                                 }
                                 style = "-fx-text-fill: part-leaf-color"
                                 graphic = treeItem.graphic
+                                contextMenu = quantityContext
 
                             }
 
@@ -273,9 +276,7 @@ class Javelin {
                                     toolText.append("\n")
                                 }
                                 tooltip = Tooltip(toolText.toString())
-
                             }
-
                         }
                     }
                 }
@@ -322,12 +323,10 @@ class Javelin {
                                 labelStatus.text = "$addQty ${addPart.code} parts added to base"
                                 labelStatus.styleClass.clear()
                                 labelStatus.styleClass.add("label-success")
-
                             }
-
                         }
 
-                        // Add Parts to Slot
+                        // Add Part to Slot
 
                         is BuildSlot -> {
                             val targetSlot: BuildSlot = target
@@ -366,7 +365,7 @@ class Javelin {
 
                                         // Add slots to new part
 
-                                        if( ! addPart.slots.isEmpty() ) {
+                                        if (!addPart.slots.isEmpty()) {
                                             for (slotName: String in addPart.slots) {
                                                 val slot = slotHashMap[slotName]
                                                 val addSlot = BuildSlot(slot!!)
@@ -380,14 +379,12 @@ class Javelin {
                                         labelStatus.text = "$addQty parts added to slot ${targetSlot.name}"
                                         labelStatus.styleClass.clear()
                                         labelStatus.styleClass.add("label-success")
-                                        }
+                                    }
                                 }
                             }
                         }
                     }
-
                 }
-
                 event.isDropCompleted
                 event.consume()
             }
@@ -491,6 +488,13 @@ class Javelin {
         }
     }
 
+    private fun loadBuildTree() {
+        for (item in buildTreeRootItem.children) {
+            item.isExpanded
+
+        }
+    }
+
     private fun newTreeItem(value: Any): TreeItem<Any> {
         var treeItem: TreeItem<Any>
         when (value) {
@@ -506,6 +510,7 @@ class Javelin {
                     treeItem = TreeItem(part)
                 }
             }
+
             is BuildPart -> {
                 val buildPart: BuildPart = value
                 val image = buildPart.category
@@ -540,7 +545,7 @@ class Javelin {
                 val fxmlLoader = FXMLLoader(javaClass.getResource("createPart.fxml"))
                 val partForm: Parent = fxmlLoader.load()
                 val partStage = Stage()
-                partStage.title = "Create New Part"
+                partStage.title = "Create a part"
                 partStage.setOnHiding {
                     loadPartTree()
                 }
@@ -556,14 +561,17 @@ class Javelin {
 
             }
         }
+
+        // Create new slot context menu
+
         val newSlot = MenuItem("create slot")
         newSlot.setOnAction {
-            selectedTreeItem = treeViewPart.selectionModel.selectedItem
+            selectedTreeItem = treeViewBuild.selectionModel.selectedItem
             try {
                 val fxmlLoader = FXMLLoader(javaClass.getResource("createSlot.fxml"))
                 val slotForm: Parent = fxmlLoader.load()
                 val slotStage = Stage()
-                slotStage.title = "Create New Slot"
+                slotStage.title = "Create a slot"
                 slotStage.setOnHiding {
                     loadPartTree()
                 }
@@ -573,12 +581,36 @@ class Javelin {
                 labelStatus.text = e.message
                 labelStatus.styleClass.clear()
                 labelStatus.styleClass.add("label-failure")
+            }
+        }
 
+        // Create build part context menu
+
+        val partQty = MenuItem("change quantity ")
+        partQty.setOnAction {
+            selectedTreeItem = treeViewBuild.selectionModel.selectedItem
+            try {
+                val fxmlLoader = FXMLLoader(javaClass.getResource("changeQty.fxml"))
+                val qtyForm: Parent = fxmlLoader.load()
+                val qtyStage = Stage()
+
+                qtyStage.setOnHiding {
+                    loadBuildTree()
+                }
+                qtyStage.title = "Change part quantity"
+                qtyStage.scene = Scene(qtyForm)
+                qtyStage.show()
+
+            } catch (e: IOException) {
+                labelStatus.text = e.message
+                labelStatus.styleClass.clear()
+                labelStatus.styleClass.add("label-failure")
             }
         }
 
         folderContext.items.add(newPart)
         partContext.items.add(newSlot)
+        quantityContext.items.add(partQty)
     }
 
 
