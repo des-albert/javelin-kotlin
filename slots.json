@@ -1,5 +1,12 @@
 [
   {
+    "name": "build",
+    "type": "U",
+    "quantity": 0,
+    "description": "",
+    "parts": []
+  },
+  {
     "name": "NVMe Drive",
     "type": "M",
     "quantity": 8,

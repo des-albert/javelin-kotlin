@@ -24,7 +24,9 @@
             </Button>
             <TreeView fx:id="treeViewPart" layoutX="45.0" layoutY="25.0" onDragDetected="#partDragDetected"
                       prefHeight="660.0" prefWidth="500.0" stylesheets="@../../css/treeview.css"/>
-            <Label fx:id="labelStatus" layoutX="43.0" layoutY="690.0" prefHeight="17.0" prefWidth="502.0" />
+            <TreeView fx:id="treeViewBuild" layoutX="660.0" layoutY="25.0" onDragDetected="#buildDragDetected"
+                      prefHeight="660.0" prefWidth="500" stylesheets="@../../css/treeview.css"/>
+            <Label fx:id="labelStatus" layoutX="43.0" layoutY="690.0" prefHeight="17.0" prefWidth="502.0"/>
         </AnchorPane>
     </Tab>
     <Tab text="Files">

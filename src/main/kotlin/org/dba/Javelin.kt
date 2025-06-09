@@ -20,6 +20,7 @@ import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
 import java.io.IOException
+import java.util.Optional
 import kotlin.collections.HashMap
 
 
@@ -28,6 +29,7 @@ class Javelin {
     lateinit var labelStatus: Label
     lateinit var buttonQuit: Button
     lateinit var treeViewPart: TreeView<Any>
+    lateinit var treeViewBuild: TreeView<Any>
     lateinit var tabPaneMain: TabPane
     lateinit var labelJDK: Label
 
@@ -39,6 +41,8 @@ class Javelin {
 
     val folderContext: ContextMenu = ContextMenu()
     val partContext: ContextMenu = ContextMenu()
+
+    val buildHashMap: HashMap<String, TreeItem<Any>> = HashMap()
 
     companion object {
         var selectedTreeItem: TreeItem<Any>? = null
@@ -52,6 +56,7 @@ class Javelin {
     private val dfParentSlot: DataFormat = DataFormat("org.dba.javelin.ParentSlot")
 
     private lateinit var partTreeRootItem: TreeItem<Any>
+    private lateinit var buildTreeRootItem: TreeItem<Any>
 
     val logger: Logger = LoggerFactory.getLogger("Javelin")
 
@@ -60,6 +65,7 @@ class Javelin {
         labelJDK.text = "Java SDK %s".format(System.getProperty("java.version"))
 
         definePartsTreeView()
+        defineBuildTreeView()
         addPartsSlots()
         loadPartTree()
         addContext()
@@ -103,6 +109,10 @@ class Javelin {
         }
         event.consume()
 
+    }
+
+    @FXML
+    fun buildDragDetected() {
     }
 
     private fun definePartsTreeView() {
@@ -172,7 +182,7 @@ class Javelin {
 
                             val slot = target
 
-                            if ( ! slot.parts.contains(code)) {
+                            if (!slot.parts.contains(code)) {
                                 slot.parts.add(code)
                                 slotHashMap[slot.name] = slot
                                 loadPartTree()
@@ -183,6 +193,7 @@ class Javelin {
                             }
                         }
                     }
+
                     is Part -> {
                         if (event.dragboard.hasContent(dfSlot)) {
                             val slot: Slot = event.dragboard.getContent(dfSlot) as Slot
@@ -201,12 +212,189 @@ class Javelin {
                 }
                 event.isDropCompleted = true
                 event.consume()
-
-
             }
             return@Callback cell
 
         }
+    }
+
+    fun defineBuildTreeView() {
+        val parts = ArrayList<String>()
+        val buildSlot = Slot("build", "U", 0, "", parts)
+        slotHashMap["build"] = buildSlot
+        val slots = ArrayList<String>()
+        slots.add("build")
+        val buildPart = BuildPart("build", "build", "", slots)
+
+        buildTreeRootItem = TreeItem<Any>(buildPart)
+        treeViewBuild.root = buildTreeRootItem
+        treeViewBuild.isShowRoot = true
+
+        treeViewBuild.cellFactory = Callback { _ ->
+            val cell = object : TreeCell<Any>() {
+                override fun updateItem(item: Any?, empty: Boolean) {
+                    super.updateItem(item, empty)
+                    if (empty || item == null) {
+                        text = null
+                        graphic = null
+                        tooltip = null
+
+                    } else {
+                        when (item) {
+                            is BuildPart -> {
+                                val part: BuildPart = item
+                                tooltip = Tooltip(part.totalCount.toString() + " x " + part.code)
+                                if (part.buildCount > 1) {
+                                    text = "${part.buildCount} x ${part.description}"
+                                } else {
+                                    text = part.description
+                                }
+                                style = "-fx-text-fill: part-leaf-color"
+                                graphic = treeItem.graphic
+
+                            }
+
+                            is BuildSlot -> {
+                                val slot: BuildSlot = item
+                                text = slot.name
+                                style = "-fx-text-fill: slot-leaf-color"
+                                val parts = slot.parts
+                                var toolText = StringBuilder()
+                                if (slot.type.equals("E"))
+                                    toolText = StringBuilder("exact - " + slot.quantity)
+                                else if (slot.type.equals("M"))
+                                    toolText = StringBuilder("max - " + slot.quantity)
+                                toolText.append("current - ")
+                                toolText.append(slot.content)
+                                toolText.append("\n")
+                                for (code in parts) {
+                                    val slotPart = partHashMap[code]
+                                    toolText.append(slotPart!!.description)
+                                    toolText.append("\n")
+                                }
+                                tooltip = Tooltip(toolText.toString())
+
+                            }
+
+                        }
+                    }
+                }
+            }
+            cell.setOnDragOver { event ->
+                event.acceptTransferModes(TransferMode.COPY)
+                event.consume()
+            }
+
+            cell.setOnDragDropped { event ->
+                val targetItem = cell.treeItem
+                if (event.dragboard.hasContent(dfPart)) {
+                    val part: Part = event.dragboard.getContent(dfPart) as Part
+                    val target = targetItem.value
+
+                    // Add Part to Build Base
+
+                    when (target) {
+                        is BuildPart -> {
+                            val targetPart: BuildPart = target
+                            var addQty = 0
+                            val countDialog = TextInputDialog()
+                            countDialog.headerText = "enter part quantity : "
+                            val addCount: Optional<String> = countDialog.showAndWait()
+                            if (addCount.isPresent)
+                                addQty = addCount.get().toInt()
+                            val addPart = BuildPart(part)
+                            addPart.buildCount = addQty
+                            addPart.totalCount = addQty
+                            addPart.parentHash = targetPart.code.hashCode()
+                            val partTreeItem = newTreeItem(addPart)
+                            buildHashMap[part.code] = partTreeItem
+                            buildTreeRootItem.children.add(partTreeItem)
+
+                            if (!addPart.slots.isEmpty()) {
+                                for (slotName: String in addPart.slots) {
+                                    val slot = slotHashMap[slotName]
+                                    val addSlot = BuildSlot(slot!!)
+                                    addSlot.parentHash = addPart.code.hashCode()
+                                    val slotTreeItem = newTreeItem(addSlot)
+                                    buildHashMap[slotName] = slotTreeItem
+                                    partTreeItem.children.add(slotTreeItem)
+                                }
+                                labelStatus.text = "$addQty ${addPart.code} parts added to base"
+                                labelStatus.styleClass.clear()
+                                labelStatus.styleClass.add("label-success")
+
+                            }
+
+                        }
+
+                        // Add Parts to Slot
+
+                        is BuildSlot -> {
+                            val targetSlot: BuildSlot = target
+                            if (!targetSlot.parts.isEmpty()) {
+                                val slotParts = targetSlot.parts
+                                if (slotParts.contains(part.code)) {
+                                    var addQty = 0
+                                    val addPart = BuildPart(part)
+                                    val currentQty = targetSlot.content
+                                    val maxQty = targetSlot.quantity
+                                    if (targetSlot.type.equals("U") || currentQty < maxQty) {
+                                        if (targetSlot.type.equals("E")) {
+                                            addQty = targetSlot.quantity
+                                        } else {
+                                            val countDialog = TextInputDialog()
+                                            val limitQty = maxQty - currentQty
+                                            if (targetSlot.type.equals("U"))
+                                                countDialog.headerText = "enter part quantity : "
+                                            else
+                                                countDialog.headerText = "enter part quantity <= $limitQty : "
+                                            val addCount: Optional<String> = countDialog.showAndWait()
+                                            if (addCount.isPresent)
+                                                addQty = addCount.get().toInt()
+                                            if (targetSlot.type.equals("M") && addQty > limitQty)
+                                                addQty = limitQty
+                                        }
+
+                                        addPart.buildCount = addQty
+                                        val targetPart: BuildPart = targetItem.parent.value as BuildPart
+                                        addPart.totalCount = targetPart.totalCount * addQty
+                                        targetSlot.content = currentQty + addQty
+                                        addPart.parentHash = targetSlot.name.hashCode()
+                                        val partTreeItem = newTreeItem(addPart)
+                                        buildHashMap[addPart.code] = partTreeRootItem
+                                        targetItem.children.add(partTreeItem)
+
+                                        // Add slots to new part
+
+                                        if( ! addPart.slots.isEmpty() ) {
+                                            for (slotName: String in addPart.slots) {
+                                                val slot = slotHashMap[slotName]
+                                                val addSlot = BuildSlot(slot!!)
+                                                addSlot.parentHash = addPart.code.hashCode()
+                                                val slotTreeItem = newTreeItem(addSlot)
+                                                buildHashMap[slotName] = slotTreeItem
+                                                partTreeItem.children.add(slotTreeItem)
+                                            }
+
+                                        }
+                                        labelStatus.text = "$addQty parts added to slot ${targetSlot.name}"
+                                        labelStatus.styleClass.clear()
+                                        labelStatus.styleClass.add("label-success")
+                                        }
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+                event.isDropCompleted
+                event.consume()
+            }
+            return@Callback cell
+        }
+
+
     }
 
     @FXML
@@ -316,6 +504,18 @@ class Javelin {
                     treeItem = TreeItem(part, ImageView(icon))
                 } else {
                     treeItem = TreeItem(part)
+                }
+            }
+            is BuildPart -> {
+                val buildPart: BuildPart = value
+                val image = buildPart.category
+                val iconPath = "/img/$image.png"
+                val iconStream = javaClass.getResourceAsStream(iconPath)
+                if (iconStream != null) {
+                    val icon = Image(iconStream)
+                    treeItem = TreeItem(buildPart, ImageView(icon))
+                } else {
+                    treeItem = TreeItem(buildPart)
                 }
             }
 
