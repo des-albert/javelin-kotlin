@@ -7,7 +7,7 @@ class BuildPart : Serializable{
     val description: String
     val category: String
     val slots: ArrayList<String>
-    var parentHash: Int
+    var parent: String
     var buildCount: Int
     var totalCount: Int
 
@@ -17,7 +17,7 @@ class BuildPart : Serializable{
         this.category = category
         this.slots = slots
         this.buildCount = 0
-        this.parentHash = 0
+        this.parent = ""
         this.totalCount = 0
 
     }
@@ -26,7 +26,7 @@ class BuildPart : Serializable{
         description = part.description
         category = part.category
         slots = part.slots
-        parentHash  = 0
+        parent  = ""
         buildCount = 0
         totalCount = 0
     }

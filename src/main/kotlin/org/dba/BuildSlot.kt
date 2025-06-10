@@ -8,7 +8,7 @@ class BuildSlot : Serializable{
     val quantity: Int
     val description: String
     val parts: ArrayList<String>
-    var parentHash: Int
+    var parent: String
     var content: Int
 
     constructor(slot: Slot) {
@@ -17,7 +17,7 @@ class BuildSlot : Serializable{
         quantity = slot.quantity
         description = slot.description
         parts = slot.parts
-        parentHash = 0
+        parent = ""
         content = 0
     }
 

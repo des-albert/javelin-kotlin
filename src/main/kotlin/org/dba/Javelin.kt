@@ -12,10 +12,13 @@ import javafx.scene.control.*
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.input.*
+import javafx.stage.FileChooser
 import javafx.stage.Stage
 import javafx.util.Callback
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.BufferedReader
+import java.io.BufferedWriter
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
@@ -55,6 +58,7 @@ class Javelin {
     private val dfSlot: DataFormat = DataFormat("org.dba.javelin.Slot")
     private val dfParentPart: DataFormat = DataFormat("org.dba.javelin.ParentPart")
     private val dfParentSlot: DataFormat = DataFormat("org.dba.javelin.ParentSlot")
+    private val dfBuild: DataFormat = DataFormat("org.dba.javelin.BuildPart")
 
     private lateinit var partTreeRootItem: TreeItem<Any>
     private lateinit var buildTreeRootItem: TreeItem<Any>
@@ -67,6 +71,7 @@ class Javelin {
         labelJavaFX.text = "JavaFX version %s".format(System.getProperty("javafx.runtime.version"))
 
         definePartsTreeView()
+        defineTrash()
         defineBuildTreeView()
         addPartsSlots()
         loadPartTree()
@@ -220,6 +225,112 @@ class Javelin {
         }
     }
 
+    fun defineTrash() {
+
+        // Trash handler
+
+        imageViewTrash.setOnDragOver { event ->
+            event.acceptTransferModes(TransferMode.COPY)
+            event.consume()
+        }
+
+        imageViewTrash.setOnDragEntered { event ->
+            val iconPath = "/img/glass trash.png"
+            val icon = Image(javaClass.getResourceAsStream(iconPath))
+            imageViewTrash.image = icon
+            event.consume()
+        }
+
+        imageViewTrash.setOnDragExited { event ->
+            val iconPath = "/img/trash.png"
+            val icon = Image(javaClass.getResourceAsStream(iconPath))
+            imageViewTrash.image = icon
+            event.consume()
+        }
+
+        imageViewTrash.setOnDragDropped { event ->
+
+            if (event.dragboard.hasContent(dfPart)) {
+                if (event.dragboard.hasContent(dfParentSlot)) {
+
+                    // Remove Part from Slot in Part TreeView
+
+                    val part: Part = event.dragboard.getContent(dfPart) as Part
+                    val slot: Slot = event.dragboard.getContent(dfParentSlot) as Slot
+                    val slotParts = slot.parts
+                    val code = part.code
+                    if (slotParts.contains(code)) {
+                        slotParts.remove(code)
+                        slotHashMap[slot.name] = slot
+                        loadPartTree()
+                    }
+                    labelStatus.text = "part $code removed from slot ${slot.name}"
+                    labelStatus.styleClass.clear()
+                    labelStatus.styleClass.add("label-success")
+
+                    // Delete Part
+
+                } else {
+                    val part: Part = event.dragboard.getContent(dfPart) as Part
+                    val code = part.code
+                    partHashMap.remove(code)
+
+                    // Remove part from containing slots
+
+                    for (slot in slotHashMap.values) {
+                        if (slot.parts.contains(code)) {
+                            val slotParts = slot.parts
+                            slotParts.remove(code)
+                            slotHashMap[slot.name] = slot
+
+
+                        }
+                    }
+                    labelStatus.text = "part $code removed"
+                    labelStatus.styleClass.clear()
+                    labelStatus.styleClass.add("label-success")
+
+                    loadPartTree()
+                }
+            } else if (event.dragboard.hasContent(dfSlot)) {
+
+                // Remove Slot from Part
+
+                val slot: Slot = event.dragboard.getContent(dfSlot) as Slot
+                val part: Part = event.dragboard.getContent(dfParentPart) as Part
+                val partSlots = part.slots
+                partSlots.remove(slot.name)
+                loadPartTree()
+
+
+                // Remove Build Part
+
+            } else if (event.dragboard.hasContent(dfBuild)) {
+
+                val part: BuildPart = event.dragboard.getContent(dfBuild) as BuildPart
+                val slot: BuildSlot = event.dragboard.getContent(dfParentSlot) as BuildSlot
+                val parentItem = buildHashMap[slot.name]
+                val partItem = buildHashMap[part.code]
+                parentItem?.children?.remove(partItem)
+                buildHashMap.remove(part.code)
+
+                slot.content = 0
+                parentItem?.value = slot
+                treeViewBuild.refresh()
+
+                labelStatus.text = "${slot.content} parts removed from slot ${slot.name}"
+                labelStatus.styleClass.clear()
+                labelStatus.styleClass.add("label-success")
+
+            }
+
+            event.isDropCompleted
+            event.consume()
+
+        }
+
+    }
+
     fun defineBuildTreeView() {
         val parts = ArrayList<String>()
         val buildSlot = Slot("build", "U", 0, "", parts)
@@ -246,10 +357,10 @@ class Javelin {
                             is BuildPart -> {
                                 val part: BuildPart = item
                                 tooltip = Tooltip(part.totalCount.toString() + " x " + part.code)
-                                if (part.buildCount > 1) {
-                                    text = "${part.buildCount} x ${part.description}"
+                                text = if (part.buildCount > 1) {
+                                    "${part.buildCount} x ${part.description}"
                                 } else {
-                                    text = part.description
+                                    part.description
                                 }
                                 style = "-fx-text-fill: part-leaf-color"
                                 graphic = treeItem.graphic
@@ -263,9 +374,9 @@ class Javelin {
                                 style = "-fx-text-fill: slot-leaf-color"
                                 val parts = slot.parts
                                 var toolText = StringBuilder()
-                                if (slot.type.equals("E"))
+                                if (slot.type == "E")
                                     toolText = StringBuilder("exact - " + slot.quantity)
-                                else if (slot.type.equals("M"))
+                                else if (slot.type == "M")
                                     toolText = StringBuilder("max - " + slot.quantity)
                                 toolText.append("current - ")
                                 toolText.append(slot.content)
@@ -306,7 +417,7 @@ class Javelin {
                             val addPart = BuildPart(part)
                             addPart.buildCount = addQty
                             addPart.totalCount = addQty
-                            addPart.parentHash = targetPart.code.hashCode()
+                            addPart.parent = targetPart.code
                             val partTreeItem = newTreeItem(addPart)
                             buildHashMap[part.code] = partTreeItem
                             buildTreeRootItem.children.add(partTreeItem)
@@ -315,7 +426,7 @@ class Javelin {
                                 for (slotName: String in addPart.slots) {
                                     val slot = slotHashMap[slotName]
                                     val addSlot = BuildSlot(slot!!)
-                                    addSlot.parentHash = addPart.code.hashCode()
+                                    addSlot.parent = addPart.code
                                     val slotTreeItem = newTreeItem(addSlot)
                                     buildHashMap[slotName] = slotTreeItem
                                     partTreeItem.children.add(slotTreeItem)
@@ -337,20 +448,20 @@ class Javelin {
                                     val addPart = BuildPart(part)
                                     val currentQty = targetSlot.content
                                     val maxQty = targetSlot.quantity
-                                    if (targetSlot.type.equals("U") || currentQty < maxQty) {
-                                        if (targetSlot.type.equals("E")) {
+                                    if (targetSlot.type == "U" || currentQty < maxQty) {
+                                        if (targetSlot.type == "E") {
                                             addQty = targetSlot.quantity
                                         } else {
                                             val countDialog = TextInputDialog()
                                             val limitQty = maxQty - currentQty
-                                            if (targetSlot.type.equals("U"))
+                                            if (targetSlot.type == "U")
                                                 countDialog.headerText = "enter part quantity : "
                                             else
                                                 countDialog.headerText = "enter part quantity <= $limitQty : "
                                             val addCount: Optional<String> = countDialog.showAndWait()
                                             if (addCount.isPresent)
                                                 addQty = addCount.get().toInt()
-                                            if (targetSlot.type.equals("M") && addQty > limitQty)
+                                            if (targetSlot.type == "M" && addQty > limitQty)
                                                 addQty = limitQty
                                         }
 
@@ -358,7 +469,7 @@ class Javelin {
                                         val targetPart: BuildPart = targetItem.parent.value as BuildPart
                                         addPart.totalCount = targetPart.totalCount * addQty
                                         targetSlot.content = currentQty + addQty
-                                        addPart.parentHash = targetSlot.name.hashCode()
+                                        addPart.parent = targetSlot.name
                                         val partTreeItem = newTreeItem(addPart)
                                         buildHashMap[addPart.code] = partTreeRootItem
                                         targetItem.children.add(partTreeItem)
@@ -369,7 +480,7 @@ class Javelin {
                                             for (slotName: String in addPart.slots) {
                                                 val slot = slotHashMap[slotName]
                                                 val addSlot = BuildSlot(slot!!)
-                                                addSlot.parentHash = addPart.code.hashCode()
+                                                addSlot.parent = addPart.code
                                                 val slotTreeItem = newTreeItem(addSlot)
                                                 buildHashMap[slotName] = slotTreeItem
                                                 partTreeItem.children.add(slotTreeItem)
@@ -491,8 +602,8 @@ class Javelin {
     private fun loadBuildTree() {
         for (item in buildTreeRootItem.children) {
             item.isExpanded
-
         }
+        treeViewBuild.refresh()
     }
 
     private fun newTreeItem(value: Any): TreeItem<Any> {
@@ -584,7 +695,7 @@ class Javelin {
             }
         }
 
-        // Create build part context menu
+        // Create a context menu to change build quantity
 
         val partQty = MenuItem("change quantity ")
         partQty.setOnAction {
@@ -661,6 +772,173 @@ class Javelin {
         } catch (e: IOException) {
             logger.error("saveSlots - {}", e.message)
         }
+    }
+
+    fun buttonExportOnAction() {
+        val exportHash: HashMap<String, Int> = HashMap()
+        try {
+            val fileChooser = FileChooser()
+            fileChooser.extensionFilters.add(FileChooser.ExtensionFilter("vsv file (*.csv)", "*.csv"))
+            fileChooser.title = "save config as csv file"
+            val  exportFile = fileChooser.showSaveDialog(tabPaneMain.scene.window)
+            if (exportFile.exists()) {
+                if ( ! exportFile.delete()) {
+                    labelStatus.text = "file delete error $exportFile"
+                    labelStatus.styleClass.clear()
+                    labelStatus.styleClass.add("label-failure")
+                }
+            }
+            if (exportFile.createNewFile()) {
+
+                val fw = FileWriter(exportFile)
+                val bw = BufferedWriter(fw)
+
+                exportTree(buildTreeRootItem, exportHash)
+
+                for (entry: MutableMap.MutableEntry<String, Int> in exportHash.entries) {
+                    bw.write( entry.key + "," + entry.value)
+                    bw.newLine()
+                }
+
+                bw.close()
+                fw.close()
+            }
+
+        } catch (e: IOException) {
+            logger.error("export - {}", e.message)
+        }
+    }
+
+    private fun exportTree(item: TreeItem<Any>, map: HashMap<String, Int>) {
+        val value = item.value
+        if (value is BuildPart) {
+            val part: BuildPart = value
+            if (part.totalCount > 0)
+                updateTotal(part, map)
+        }
+
+        for (childItem: TreeItem<Any> in item.children) {
+            if (childItem.children.isEmpty()) {
+                val childValue = childItem.value
+                if (childValue is BuildPart) {
+                    val part = childValue
+                    updateTotal(part, map)
+                }
+            } else
+                exportTree(childItem, map)
+        }
+
+    }
+
+    private fun updateTotal(part: BuildPart, map: HashMap<String, Int>) {
+        if (map.containsKey(part.code))
+            map[part.code] = map[part.code]!! + part.totalCount
+        else
+            map[part.code] = part.totalCount
+
+    }
+
+
+    fun buttonSaveConfigOnAction() {
+        val fileChooser = FileChooser()
+        fileChooser.extensionFilters.add(FileChooser.ExtensionFilter("json file (*.json)", "*.json"))
+        fileChooser.title = "save config as JSON file"
+        val jsonFile = fileChooser.showSaveDialog(tabPaneMain.scene.window)
+        val gson = Gson()
+        try {
+            if (jsonFile.exists()) {
+                if ( ! jsonFile.delete()) {
+                    labelStatus.text = "file delete error $jsonFile"
+                    labelStatus.styleClass.clear()
+                    labelStatus.styleClass.add("label-failure")
+                }
+            }
+            if (jsonFile.createNewFile()) {
+
+                val fw = FileWriter(jsonFile)
+                val bw = BufferedWriter(fw)
+                saveTree(buildTreeRootItem, bw, gson)
+
+                bw.close()
+                fw.close()
+            }
+
+        } catch (e: IOException) {
+            logger.error("save config - {}", e.message)
+        }
+    }
+
+    private fun saveTree(item: TreeItem<Any>, bw: BufferedWriter, gson: Gson) {
+        try {
+            var json = gson.toJson(item.value)
+            bw.write(json)
+            bw.newLine()
+            for (child in item.children) {
+                if (child.children.isEmpty()) {
+                    json = gson.toJson(child.value)
+                    bw.write(json)
+                    bw.newLine()
+                } else
+                saveTree(child, bw, gson)
+            }
+        } catch  (e: IOException ) {
+            logger.error("save Tree - {}", e.message)
+        }
+    }
+    fun buttonLoadConfigOnAction() {
+
+        val fileChooser = FileChooser()
+        fileChooser.extensionFilters.add(FileChooser.ExtensionFilter("json file (*.json)", "*.json"))
+        fileChooser.title = "open config JSON file"
+        val jsonFile = fileChooser.showOpenDialog(tabPaneMain.scene.window)
+        val gson = Gson()
+        try {
+            val fr = FileReader(jsonFile)
+            val br = BufferedReader(fr)
+            readTree(br, gson)
+
+        } catch (e: IOException) {
+            logger.error("load config - {}", e.message)
+        }
+        treeViewBuild.refresh()
+    }
+
+    private fun readTree(br: BufferedReader, gson: Gson) {
+
+        try {
+            while (true) {
+                val line = br.readLine()
+                if ( line != null && line.isNotEmpty()) {
+                    if (line.contains("code")) {
+                        val buildPart = gson.fromJson(line, BuildPart::class.java)
+
+                        if (buildPart.code == "build") {
+                            buildTreeRootItem = TreeItem<Any>(buildPart)
+                            buildHashMap[buildPart.code] = buildTreeRootItem
+                            treeViewBuild.root = buildTreeRootItem
+                            treeViewBuild.isShowRoot = true
+                        } else {
+                            val partItem = newTreeItem(buildPart)
+                            buildHashMap[buildPart.code] = partItem
+                            val parentItem = buildHashMap[buildPart.parent]
+                            parentItem?.children?.add(partItem)
+
+                        }
+                    } else {
+                        val slot = gson.fromJson(line, BuildSlot::class.java)
+                        val slotItem = newTreeItem(slot)
+                        buildHashMap[slot.name] = slotItem
+                        val parentItem = buildHashMap[slot.parent]
+                        parentItem?.children?.add(slotItem)
+                    }
+                } else {
+                    break
+                }
+            }
+        } catch (e: IOException) {
+            logger.error("readTree - {}", e.message)
+        }
+
     }
 
 }

@@ -39,7 +39,22 @@
     </Tab>
     <Tab text="Files">
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"
-                    stylesheets="@../../css/style.css"/>
+                    stylesheets="@../../css/style.css">
+            <Button layoutX="130.0" layoutY="78.0" mnemonicParsing="false" onAction="#buttonExportOnAction"
+                    prefHeight="44.0" prefWidth="143.0" text="export">
+                <font>
+                    <Font size="14.0"/>
+                </font>
+            </Button>
+            <ImageView fitHeight="186.0" fitWidth="578.0" layoutX="130.0" layoutY="486.0" pickOnBounds="true"
+                       preserveRatio="true">
+                <Image url="@../../img/javelin.gif"/>
+            </ImageView>
+            <Button layoutX="421.0" layoutY="81.0" mnemonicParsing="false" onAction="#buttonSaveConfigOnAction"
+                    prefHeight="15.0" prefWidth="125.0" text="save"/>
+            <Button layoutX="421.0" layoutY="136.0" mnemonicParsing="false" onAction="#buttonLoadConfigOnAction"
+                    prefHeight="45.0" prefWidth="124.0" text="load"/>
+        </AnchorPane>
     </Tab>
     <Tab text="About">
         <AnchorPane>
