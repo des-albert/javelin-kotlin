@@ -1,5 +1,14 @@
 [
   {
+    "name": "Granite Rapids CPU",
+    "type": "E",
+    "quantity": 2,
+    "description": "Intel Xeon Granite Rapids CPU",
+    "parts": [
+      "P73834-B21"
+    ]
+  },
+  {
     "name": "build",
     "type": "U",
     "quantity": 0,

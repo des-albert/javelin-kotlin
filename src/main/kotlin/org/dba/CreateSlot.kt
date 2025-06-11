@@ -50,7 +50,7 @@ class CreateSlot {
         val newSlot = Slot(name, type, count, description, parts)
 
         slotHashMap[newSlot.name] = newSlot
-        val part: Part = selectedTreeItem?.value as Part
+        val part: Part = selectedTreeItem?.value  as Part
         part.slots.add(newSlot.name)
         partHashMap[part.code] = part
 

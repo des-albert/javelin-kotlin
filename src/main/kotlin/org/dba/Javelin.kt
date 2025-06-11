@@ -690,7 +690,7 @@ class Javelin {
 
         val newSlot = MenuItem("create slot")
         newSlot.setOnAction {
-            selectedTreeItem = treeViewBuild.selectionModel.selectedItem
+            selectedTreeItem = treeViewPart.selectionModel.selectedItem
             try {
                 val fxmlLoader = FXMLLoader(javaClass.getResource("createSlot.fxml"))
                 val slotForm: Parent = fxmlLoader.load()
@@ -809,7 +809,7 @@ class Javelin {
                     val part = buildHashMap[entry.key]?.value as BuildPart
                     val description = part.description
                     val od1 = part.od1
-                    bw.write(entry.value.toString() + "," + "," + entry.key + "," + description)
+                    bw.write(entry.value.toString() + "," + entry.key + "," + description)
                     bw.newLine()
                     if (od1) {
                         val code = part.code.padEnd(13, ' ') + "0D1"

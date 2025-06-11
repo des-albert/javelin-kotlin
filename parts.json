@@ -24,6 +24,16 @@
     "od1": true
   },
   {
+    "code": "S6G97A",
+    "description": "HPE Compute XD690 Air Cooling Server",
+    "category": "HPE Compute XD Servers",
+    "slots": [
+      "Granite Rapids CPU"
+    ],
+    "hint": "",
+    "od1": true
+  },
+  {
     "code": "P73359-B21",
     "description": "AMD EPYC 9535 2.4GHz 64-core 300W Processor for HPE",
     "category": "AMD Turin CPU",
@@ -57,6 +67,14 @@
     "category": "DDR5-6400 DIMM",
     "slots": [],
     "hint": "128 GB DIMM",
+    "od1": true
+  },
+  {
+    "code": "P73834-B21",
+    "description": "Intel Xeon 6767P 2.4GHz 64-core 350W Processor for HPE",
+    "category": "Intel Granite Rapids CPU",
+    "slots": [],
+    "hint": "6767P 64c 2.4G 350W",
     "od1": true
   },
   {
