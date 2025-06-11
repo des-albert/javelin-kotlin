@@ -806,7 +806,9 @@ class Javelin {
                 exportTree(buildTreeRootItem, exportHash)
 
                 for (entry: MutableMap.MutableEntry<String, Int> in exportHash.entries) {
-                    bw.write(entry.key + "," + entry.value)
+                    val part = buildHashMap[entry.key]?.value as BuildPart
+                    val description = part.description
+                    bw.write(entry.value.toString() + "," + "," + entry.key + "," + description)
                     bw.newLine()
                 }
 
@@ -858,7 +860,7 @@ class Javelin {
         val jsonFile = fileChooser.showSaveDialog(tabPaneMain.scene.window)
         try {
             val gson = GsonBuilder().setPrettyPrinting().create()
-            val rootJsonArray = JsonArray()
+            val jsonArray = JsonArray()
             if (jsonFile.exists()) {
                 if (!jsonFile.delete()) {
                     labelFileStatus.text = "file delete error $jsonFile"
@@ -868,11 +870,11 @@ class Javelin {
             }
             if (jsonFile.createNewFile()) {
 
-                addTreeItemsToJsonArray(buildTreeRootItem, rootJsonArray, gson)
+                addTreeItemsToJsonArray(buildTreeRootItem, jsonArray, gson)
 
                 FileWriter(jsonFile).use { fw ->
                     BufferedWriter(fw).use { bw ->
-                        gson.toJson(rootJsonArray, bw)
+                        gson.toJson(jsonArray, bw)
                     }
                 }
             }
