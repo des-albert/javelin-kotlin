@@ -3,6 +3,7 @@ package org.dba
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
+import com.google.gson.JsonParser
 import com.google.gson.stream.JsonReader
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
@@ -29,6 +30,7 @@ import kotlin.collections.HashMap
 
 class Javelin {
 
+    lateinit var labelFileStatus: Label
     lateinit var toggleBuild: ToggleButton
     lateinit var togglePart: ToggleButton
     lateinit var imageViewTrash: ImageView
@@ -138,6 +140,7 @@ class Javelin {
                             }
                         }
                     }
+
                     is BuildSlot -> {
                         labelStatus.text = "build slot cannot be removed"
                         labelStatus.styleClass.clear()
@@ -215,7 +218,7 @@ class Javelin {
                             val part: Part = event.dragboard.getContent(dfPart) as Part
                             val code = part.code
                             val slot = target
-                            if ( ! slot.parts.contains(code)) {
+                            if (!slot.parts.contains(code)) {
                                 slot.parts.add(code)
                                 slotHashMap[slot.name] = slot
                                 loadPartTree()
@@ -785,14 +788,14 @@ class Javelin {
         val exportHash: HashMap<String, Int> = HashMap()
         try {
             val fileChooser = FileChooser()
-            fileChooser.extensionFilters.add(FileChooser.ExtensionFilter("vsv file (*.csv)", "*.csv"))
+            fileChooser.extensionFilters.add(FileChooser.ExtensionFilter("csv file (*.csv)", "*.csv"))
             fileChooser.title = "save config as csv file"
-            val  exportFile = fileChooser.showSaveDialog(tabPaneMain.scene.window)
+            val exportFile = fileChooser.showSaveDialog(tabPaneMain.scene.window)
             if (exportFile.exists()) {
-                if ( ! exportFile.delete()) {
-                    labelStatus.text = "file delete error $exportFile"
-                    labelStatus.styleClass.clear()
-                    labelStatus.styleClass.add("label-failure")
+                if (!exportFile.delete()) {
+                    labelFileStatus.text = "file delete error $exportFile"
+                    labelFileStatus.styleClass.clear()
+                    labelFileStatus.styleClass.add("label-failure")
                 }
             }
             if (exportFile.createNewFile()) {
@@ -803,13 +806,17 @@ class Javelin {
                 exportTree(buildTreeRootItem, exportHash)
 
                 for (entry: MutableMap.MutableEntry<String, Int> in exportHash.entries) {
-                    bw.write( entry.key + "," + entry.value)
+                    bw.write(entry.key + "," + entry.value)
                     bw.newLine()
                 }
 
                 bw.close()
                 fw.close()
             }
+            labelFileStatus.text = "file exported to $exportFile"
+            labelFileStatus.styleClass.clear()
+            labelFileStatus.styleClass.add("label-success")
+
         } catch (e: IOException) {
             logger.error("export - {}", e.message)
         }
@@ -843,104 +850,124 @@ class Javelin {
     }
 
     fun buttonSaveConfigOnAction() {
-        val fileChooser = FileChooser()
-        fileChooser.extensionFilters.add(FileChooser.ExtensionFilter("json file (*.json)", "*.json"))
-        fileChooser.title = "save config as JSON file"
+        val fileChooser = FileChooser().apply {
+            extensionFilters.add(FileChooser.ExtensionFilter("json file (*.json)", "*.json"))
+            title = "save config as JSON file"
+            initialFileName = "build_config.json"
+        }
         val jsonFile = fileChooser.showSaveDialog(tabPaneMain.scene.window)
-        val gson = Gson()
         try {
+            val gson = GsonBuilder().setPrettyPrinting().create()
+            val rootJsonArray = JsonArray()
             if (jsonFile.exists()) {
-                if ( ! jsonFile.delete()) {
-                    labelStatus.text = "file delete error $jsonFile"
-                    labelStatus.styleClass.clear()
-                    labelStatus.styleClass.add("label-failure")
+                if (!jsonFile.delete()) {
+                    labelFileStatus.text = "file delete error $jsonFile"
+                    labelFileStatus.styleClass.clear()
+                    labelFileStatus.styleClass.add("label-failure")
                 }
             }
             if (jsonFile.createNewFile()) {
 
-                val fw = FileWriter(jsonFile)
-                val bw = BufferedWriter(fw)
-                saveTree(buildTreeRootItem, bw, gson)
+                addTreeItemsToJsonArray(buildTreeRootItem, rootJsonArray, gson)
 
-                bw.close()
-                fw.close()
+                FileWriter(jsonFile).use { fw ->
+                    BufferedWriter(fw).use { bw ->
+                        gson.toJson(rootJsonArray, bw)
+                    }
+                }
             }
+            labelFileStatus.text = "Configuration saved to ${jsonFile.name}"
+            labelFileStatus.styleClass.clear()
+            labelFileStatus.styleClass.add("label-success")
 
         } catch (e: IOException) {
             logger.error("save config - {}", e.message)
         }
     }
 
-    private fun saveTree(item: TreeItem<Any>, bw: BufferedWriter, gson: Gson) {
+    private fun addTreeItemsToJsonArray(item: TreeItem<Any>, jsonArray: JsonArray, gson: Gson) {
         try {
-            var json = gson.toJson(item.value)
-            bw.write(json)
-            bw.newLine()
-            for (child in item.children) {
-                if (child.children.isEmpty()) {
-                    json = gson.toJson(child.value)
-                    bw.write(json)
-                    bw.newLine()
-                } else
-                saveTree(child, bw, gson)
+            item.value?.let {
+                val jsonElement = gson.toJsonTree(it)
+                jsonArray.add(jsonElement)
             }
-        } catch  (e: IOException ) {
-            logger.error("save Tree - {}", e.message)
+
+            for (child in item.children) {
+                addTreeItemsToJsonArray(child, jsonArray, gson)
+            }
+        } catch (e: IOException) {
+            logger.error("save Tree - ${item.value} {}", e.message)
         }
     }
 
     fun buttonLoadConfigOnAction() {
 
-        val fileChooser = FileChooser()
-        fileChooser.extensionFilters.add(FileChooser.ExtensionFilter("json file (*.json)", "*.json"))
-        fileChooser.title = "open config JSON file"
+        val fileChooser = FileChooser().apply {
+            extensionFilters.add(FileChooser.ExtensionFilter("json file (*.json)", "*.json"))
+            title = "open config JSON file"
+        }
         val jsonFile = fileChooser.showOpenDialog(tabPaneMain.scene.window)
         val gson = Gson()
         try {
-            val fr = FileReader(jsonFile)
-            val br = BufferedReader(fr)
-            readTree(br, gson)
+            FileReader(jsonFile).use { fr ->
+                BufferedReader(fr).use { br ->
+                    readTree(br, gson)
+                }
+            }
 
         } catch (e: IOException) {
             logger.error("load config - {}", e.message)
         }
+
+        labelFileStatus.text = "Configuration loaded from ${jsonFile.name}"
+        labelFileStatus.styleClass.clear()
+        labelFileStatus.styleClass.add("label-success")
+
         treeViewBuild.refresh()
     }
 
     private fun readTree(br: BufferedReader, gson: Gson) {
-        try {
-            while (true) {
-                val line = br.readLine()
-                if ( line != null && line.isNotEmpty()) {
-                    if (line.contains("code")) {
-                        val buildPart = gson.fromJson(line, BuildPart::class.java)
+        buildTreeRootItem.children.clear()
+        buildHashMap.clear()
 
-                        if (buildPart.code == "build") {
-                            buildTreeRootItem = TreeItem<Any>(buildPart)
-                            buildHashMap[buildPart.code] = buildTreeRootItem
-                            treeViewBuild.root = buildTreeRootItem
-                            treeViewBuild.isShowRoot = true
-                        } else {
-                            val partItem = newTreeItem(buildPart)
-                            buildHashMap[buildPart.code] = partItem
-                            val parentItem = buildHashMap[buildPart.parent]
-                            parentItem?.children?.add(partItem)
-                        }
+        try {
+            val jsonReader = JsonReader(br)
+            jsonReader.beginArray()
+            while (jsonReader.hasNext()) {
+                val jsonElement = JsonParser.parseReader(jsonReader)
+                val jsonObject = jsonElement.asJsonObject
+
+                if (jsonObject.has("code")) {
+                    val buildPart = gson.fromJson<BuildPart>(jsonObject, BuildPart::class.java)
+                    if (buildPart.code == "build") {
+                        buildTreeRootItem = TreeItem<Any>(buildPart)
+                        buildHashMap[buildPart.code] = buildTreeRootItem
+                        treeViewBuild.root = buildTreeRootItem
+                        treeViewBuild.isShowRoot = true
                     } else {
-                        val slot = gson.fromJson(line, BuildSlot::class.java)
-                        val slotItem = newTreeItem(slot)
-                        buildHashMap[slot.name] = slotItem
-                        val parentItem = buildHashMap[slot.parent]
-                        parentItem?.children?.add(slotItem)
+                        val partItem = newTreeItem(buildPart)
+                        buildHashMap[buildPart.code] = partItem
+                        val parentItem = buildHashMap[buildPart.parent]
+                        parentItem?.children?.add(partItem)
                     }
-                } else {
-                    break
+                } else if (jsonObject.has("name")) {
+                    val slot = gson.fromJson<BuildSlot>(jsonObject, BuildSlot::class.java)
+                    val slotItem = newTreeItem(slot)
+                    buildHashMap[slot.name] = slotItem
+                    val parentItem = buildHashMap[slot.parent]
+                    parentItem?.children?.add(slotItem)
                 }
             }
+            jsonReader.endArray()
+            jsonReader.close()
+
+
+
         } catch (e: IOException) {
             logger.error("readTree - {}", e.message)
         }
     }
+
     fun buttonPartCollapseOnAction() {
         if (togglePart.isSelected) {
             for (item: TreeItem<Any> in partTreeRootItem.children) {
@@ -957,18 +984,18 @@ class Javelin {
 
 
     fun buttonBuildCollapseOnAction() {
-       if (toggleBuild.isSelected) {
-           expandTreeView(buildTreeRootItem, true)
-           toggleBuild.text = "collapse"
-       } else {
-           expandTreeView(buildTreeRootItem, false)
-           toggleBuild.text = "expand"
-       }
-            }
+        if (toggleBuild.isSelected) {
+            expandTreeView(buildTreeRootItem, true)
+            toggleBuild.text = "collapse"
+        } else {
+            expandTreeView(buildTreeRootItem, false)
+            toggleBuild.text = "expand"
+        }
+    }
 
 
-    private fun expandTreeView( item: TreeItem<Any>?, expand: Boolean) {
-        if ( item != null && ! item.isLeaf) {
+    private fun expandTreeView(item: TreeItem<Any>?, expand: Boolean) {
+        if (item != null && !item.isLeaf) {
             item.isExpanded = true
         }
         for (child in item?.children!!) {

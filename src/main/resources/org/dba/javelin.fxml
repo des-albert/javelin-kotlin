@@ -11,70 +11,52 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<TabPane fx:id="tabPaneMain" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-         prefHeight="800.0" prefWidth="1200.0" styleClass="root" stylesheets="@../../css/style.css"
-         tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
-         fx:controller="org.dba.Javelin">
+<TabPane fx:id="tabPaneMain" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" styleClass="root" stylesheets="@../../css/style.css" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.dba.Javelin">
 
     <Tab text="Main">
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="750.0" prefWidth="1200.0"
-                    stylesheets="@../../css/style.css">
-            <Button fx:id="buttonQuit" alignment="CENTER" contentDisplay="CENTER" layoutX="570.0" layoutY="41.0"
-                    mnemonicParsing="false" onAction="#buttonQuitOnAction" prefHeight="39.0" prefWidth="65.0"
-                    stylesheets="@../../css/style.css" text="Quit" textAlignment="CENTER">
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="750.0" prefWidth="1200.0" stylesheets="@../../css/style.css">
+            <Button fx:id="buttonQuit" alignment="CENTER" contentDisplay="CENTER" layoutX="570.0" layoutY="41.0" mnemonicParsing="false" onAction="#buttonQuitOnAction" prefHeight="39.0" prefWidth="65.0" stylesheets="@../../css/style.css" text="Quit" textAlignment="CENTER">
                 <font>
-                    <Font name="Ink Free" size="14.0"/>
+                    <Font name="Ink Free" size="14.0" />
                 </font>
             </Button>
-            <TreeView fx:id="treeViewPart" layoutX="45.0" layoutY="25.0" onDragDetected="#partDragDetected"
-                      prefHeight="660.0" prefWidth="500.0" stylesheets="@../../css/treeview.css"/>
-            <ImageView fx:id="imageViewTrash" fitHeight="96.0" fitWidth="153.0" layoutX="555.0" layoutY="103.0"
-                       pickOnBounds="true" preserveRatio="true">
-                <Image url="@../../img/trash.png"/>
+            <TreeView fx:id="treeViewPart" layoutX="45.0" layoutY="25.0" onDragDetected="#partDragDetected" prefHeight="660.0" prefWidth="500.0" stylesheets="@../../css/treeview.css" />
+            <ImageView fx:id="imageViewTrash" fitHeight="96.0" fitWidth="153.0" layoutX="555.0" layoutY="103.0" pickOnBounds="true" preserveRatio="true">
+                <Image url="@../../img/trash.png" />
             </ImageView>
 
-            <TreeView fx:id="treeViewBuild" layoutX="660.0" layoutY="25.0" onDragDetected="#buildDragDetected"
-                      prefHeight="660.0" prefWidth="500" stylesheets="@../../css/treeview.css"/>
-            <Label fx:id="labelStatus" layoutX="43.0" layoutY="690.0" prefHeight="17.0" prefWidth="502.0"/>
+            <TreeView fx:id="treeViewBuild" layoutX="660.0" layoutY="25.0" onDragDetected="#buildDragDetected" prefHeight="660.0" prefWidth="500" stylesheets="@../../css/treeview.css" />
+            <Label fx:id="labelStatus" layoutX="43.0" layoutY="690.0" prefHeight="17.0" prefWidth="502.0" />
 
-            <ToggleButton fx:id="togglePart" layoutX="476.0" layoutY="32.0" mnemonicParsing="false"
-                          onAction="#buttonPartCollapseOnAction" stylesheets="@../../css/style.css" text="Expand"/>
-            <ToggleButton fx:id="toggleBuild" layoutX="1093.0" layoutY="32.0" mnemonicParsing="false"
-                          onAction="#buttonBuildCollapseOnAction" stylesheets="@../../css/style.css" text="Expand"
-                          textAlignment="CENTER"/>
+            <ToggleButton fx:id="togglePart" layoutX="476.0" layoutY="32.0" mnemonicParsing="false" onAction="#buttonPartCollapseOnAction" stylesheets="@../../css/style.css" text="Expand" />
+            <ToggleButton fx:id="toggleBuild" layoutX="1093.0" layoutY="32.0" mnemonicParsing="false" onAction="#buttonBuildCollapseOnAction" stylesheets="@../../css/style.css" text="Expand" textAlignment="CENTER" />
             <Label layoutX="531.0" layoutY="690.0" styleClass="label-title" text="Javelin" textFill="#ae5a5a">
                 <font>
-                    <Font name="Ink Free" size="48.0"/>
+                    <Font name="Ink Free" size="48.0" />
                 </font>
             </Label>
         </AnchorPane>
     </Tab>
 
     <Tab text="Files">
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"
-                    stylesheets="@../../css/style.css">
-            <Button layoutX="130.0" layoutY="78.0" mnemonicParsing="false" onAction="#buttonExportOnAction"
-                    prefHeight="44.0" prefWidth="143.0" text="export">
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" stylesheets="@../../css/style.css">
+            <Button layoutX="130.0" layoutY="78.0" mnemonicParsing="false" onAction="#buttonExportOnAction" prefHeight="40.0" prefWidth="100.0" text="export">
                 <font>
-                    <Font size="14.0"/>
+                    <Font size="14.0" />
                 </font>
             </Button>
-            <ImageView fitHeight="186.0" fitWidth="578.0" layoutX="130.0" layoutY="486.0" pickOnBounds="true"
-                       preserveRatio="true">
-                <Image url="@../../img/javelin.gif"/>
+            <ImageView fitHeight="186.0" fitWidth="578.0" layoutX="130.0" layoutY="486.0" pickOnBounds="true" preserveRatio="true">
+                <Image url="@../../img/javelin.gif" />
             </ImageView>
-            <Button layoutX="421.0" layoutY="81.0" mnemonicParsing="false" onAction="#buttonSaveConfigOnAction"
-                    prefHeight="15.0" prefWidth="125.0" text="save"/>
-            <Button layoutX="421.0" layoutY="136.0" mnemonicParsing="false" onAction="#buttonLoadConfigOnAction"
-                    prefHeight="45.0" prefWidth="124.0" text="load"/>
+            <Button layoutX="421.0" layoutY="81.0" mnemonicParsing="false" onAction="#buttonSaveConfigOnAction" prefHeight="40.0" prefWidth="100.0" text="save" />
+            <Button layoutX="421.0" layoutY="136.0" mnemonicParsing="false" onAction="#buttonLoadConfigOnAction" prefHeight="40.0" prefWidth="100.0" text="load" />
+         <Label fx:id="labelFileStatus" layoutX="130.0" layoutY="714.0" prefHeight="17.0" prefWidth="541.0" text="Label" />
         </AnchorPane>
     </Tab>
     <Tab text="About">
         <AnchorPane>
-            <Label fx:id="labelJavaFX" layoutX="104.0" layoutY="113.0" prefHeight="17.0" prefWidth="282.0"
-                   styleClass="label-plain" stylesheets="@../../css/style.css" text="JavaFX"/>
-            <Label fx:id="labelJDK" layoutX="104.0" layoutY="70.0" prefHeight="17.0" prefWidth="342.0"
-                   styleClass="label-plain" stylesheets="@../../css/style.css" text="Java SDK"/>
+            <Label fx:id="labelJavaFX" layoutX="104.0" layoutY="113.0" prefHeight="17.0" prefWidth="282.0" styleClass="label-plain" stylesheets="@../../css/style.css" text="JavaFX" />
+            <Label fx:id="labelJDK" layoutX="104.0" layoutY="70.0" prefHeight="17.0" prefWidth="342.0" styleClass="label-plain" stylesheets="@../../css/style.css" text="Java SDK" />
         </AnchorPane>
     </Tab>
 </TabPane>

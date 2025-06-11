@@ -1,0 +1,91 @@
+[
+  {
+    "code": "build",
+    "description": "build",
+    "category": "",
+    "slots": [
+      "build"
+    ],
+    "parent": "",
+    "buildCount": 0,
+    "totalCount": 0
+  },
+  {
+    "code": "S4R96A",
+    "description": "HPE ProLiant Compute XD685 Direct Liquid Cooling Server",
+    "category": "HPE Proliant Compute XD685 Servers",
+    "slots": [
+      "Turin CPUs",
+      "DDR5-6400 DIMMs",
+      "NVMe Drive"
+    ],
+    "parent": "build",
+    "buildCount": 4,
+    "totalCount": 4
+  },
+  {
+    "name": "Turin CPUs",
+    "type": "E",
+    "quantity": 2,
+    "description": "AMD Turin CPUs for Cray XD 685",
+    "parts": [
+      "P73357-B21",
+      "P73359-B21",
+      "P73377-B21",
+      "P73360-B21"
+    ],
+    "parent": "S4R96A",
+    "content": 2
+  },
+  {
+    "code": "P73357-B21",
+    "description": "AMD EPYC 9655 2.6GHz 96-core 400W Processor for HPE",
+    "category": "AMD Turin CPU",
+    "slots": [],
+    "parent": "Turin CPUs",
+    "buildCount": 2,
+    "totalCount": 8
+  },
+  {
+    "name": "DDR5-6400 DIMMs",
+    "type": "M",
+    "quantity": 24,
+    "description": "DDR5-6400 DIMMs",
+    "parts": [
+      "P64986-H21",
+      "P64987-H21",
+      "P64988-H21"
+    ],
+    "parent": "S4R96A",
+    "content": 24
+  },
+  {
+    "code": "P64986-H21",
+    "description": "HPE 64GB Dual Rank x4 DDR5-6400 Smart Memory Kit",
+    "category": "DDR5-6400 DIMM",
+    "slots": [],
+    "parent": "DDR5-6400 DIMMs",
+    "buildCount": 24,
+    "totalCount": 96
+  },
+  {
+    "name": "NVMe Drive",
+    "type": "M",
+    "quantity": 8,
+    "description": "E3.S SSD NVMe Drives",
+    "parts": [
+      "S4X27A"
+    ],
+    "parent": "S4R96A",
+    "content": 4
+  },
+  {
+    "code": "S4X27A",
+    "description": "HPE Cray XD685 1.6TB NVMe Mixed Use E3.S",
+    "category": "E3.S NVMe",
+    "slots": [],
+    "parent": "NVMe Drive",
+    "buildCount": 4,
+    "totalCount": 16
+  }
+]
