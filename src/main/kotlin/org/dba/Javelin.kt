@@ -29,6 +29,8 @@ import kotlin.collections.HashMap
 
 class Javelin {
 
+    lateinit var toggleBuild: ToggleButton
+    lateinit var togglePart: ToggleButton
     lateinit var imageViewTrash: ImageView
     lateinit var labelJavaFX: Label
     lateinit var labelStatus: Label
@@ -76,51 +78,78 @@ class Javelin {
         addPartsSlots()
         loadPartTree()
         addContext()
-
     }
 
     @FXML
     fun partDragDetected(event: MouseEvent) {
 
         val selectedItem = treeViewPart.selectionModel.selectedItem
-        if (selectedItem.value != null) {
-            val dataToDrag: Any = selectedItem.value
-            val db: Dragboard = treeViewPart.startDragAndDrop(TransferMode.COPY)
-            val content = ClipboardContent()
+        if (event.isDragDetect) {
+            if (selectedItem.value != null) {
+                val dataToDrag: Any = selectedItem.value
+                val db: Dragboard = treeViewPart.startDragAndDrop(TransferMode.COPY)
+                val content = ClipboardContent()
 
-            when (dataToDrag) {
+                when (dataToDrag) {
 
-                // Drag a Part
+                    // Drag a Part
 
-                is Part -> {
-                    content.put(dfPart, dataToDrag)
-                    selectedItem.parent?.value?.let { parent ->
-                        if (parent !is Folder) {
-                            content.put(dfParentSlot, parent)
+                    is Part -> {
+                        content.put(dfPart, dataToDrag)
+                        selectedItem.parent?.value?.let { parent ->
+                            if (parent !is Folder) {
+                                content.put(dfParentSlot, parent)
+                            }
+                        }
+                    }
+
+                    // Drag a Slot
+
+                    is Slot -> {
+                        content.put(dfSlot, dataToDrag)
+                        selectedItem.parent?.value?.let { parent ->
+                            if (parent is Part) {
+                                content.put(dfParentPart, parent)
+                            }
                         }
                     }
                 }
-
-                // Drag a Slot
-
-                is Slot -> {
-                    content.put(dfSlot, dataToDrag)
-                    selectedItem.parent?.value?.let { parentObj ->
-                        if (parentObj is Part) {
-                            content.put(dfParentPart, parentObj)
-                        }
-                    }
-                }
+                db.setContent(content)
             }
-            db.setContent(content)
         }
         event.consume()
-
     }
 
     @FXML
-    fun buildDragDetected() {
+    fun buildDragDetected(event: MouseEvent) {
+        val selectedItem = treeViewBuild.selectionModel.selectedItem
+        if (event.isDragDetect) {
+            if (selectedItem.value != null) {
+                val dataToDrag: Any = selectedItem.value
+                val db: Dragboard = treeViewBuild.startDragAndDrop(TransferMode.COPY)
+                val content = ClipboardContent()
+
+                when (dataToDrag) {
+                    is BuildPart -> {
+                        content.put(dfBuild, dataToDrag)
+                        selectedItem.parent?.value?.let { parent ->
+                            if (parent !is Folder) {
+                                content.put(dfParentSlot, parent)
+                            }
+                        }
+                    }
+                    is BuildSlot -> {
+                        labelStatus.text = "build slot cannot be removed"
+                        labelStatus.styleClass.clear()
+                        labelStatus.styleClass.add("label-failure")
+                    }
+                }
+                db.setContent(content)
+            }
+        }
     }
+
+    // Initialize Parts treeView
 
     private fun definePartsTreeView() {
         val partRoot = Folder("Root Parts Folder")
@@ -167,7 +196,6 @@ class Javelin {
                                 style = "-fx-text-fill: slot-leaf-color"
                                 tooltip = Tooltip(slot.type + "-" + slot.quantity + " - " + slot.description)
                             }
-
                         }
                     }
                 }
@@ -186,20 +214,19 @@ class Javelin {
                         if (event.dragboard.hasContent(dfPart)) {
                             val part: Part = event.dragboard.getContent(dfPart) as Part
                             val code = part.code
-
                             val slot = target
-
-                            if (!slot.parts.contains(code)) {
+                            if ( ! slot.parts.contains(code)) {
                                 slot.parts.add(code)
                                 slotHashMap[slot.name] = slot
                                 loadPartTree()
                                 labelStatus.text = "part $code added to slot ${slot.name}"
                                 labelStatus.styleClass.clear()
                                 labelStatus.styleClass.add("label-success")
-
                             }
                         }
                     }
+
+                    // Add slot to part
 
                     is Part -> {
                         if (event.dragboard.hasContent(dfSlot)) {
@@ -213,7 +240,6 @@ class Javelin {
                                 labelStatus.styleClass.clear()
                                 labelStatus.styleClass.add("label-success")
                             }
-
                         }
                     }
                 }
@@ -221,13 +247,12 @@ class Javelin {
                 event.consume()
             }
             return@Callback cell
-
         }
     }
 
-    fun defineTrash() {
+    // Trash handler
 
-        // Trash handler
+    fun defineTrash() {
 
         imageViewTrash.setOnDragOver { event ->
             event.acceptTransferModes(TransferMode.COPY)
@@ -282,8 +307,6 @@ class Javelin {
                             val slotParts = slot.parts
                             slotParts.remove(code)
                             slotHashMap[slot.name] = slot
-
-
                         }
                     }
                     labelStatus.text = "part $code removed"
@@ -321,15 +344,13 @@ class Javelin {
                 labelStatus.text = "${slot.content} parts removed from slot ${slot.name}"
                 labelStatus.styleClass.clear()
                 labelStatus.styleClass.add("label-success")
-
             }
-
             event.isDropCompleted
             event.consume()
-
         }
-
     }
+
+    // Build treeView
 
     fun defineBuildTreeView() {
         val parts = ArrayList<String>()
@@ -365,7 +386,6 @@ class Javelin {
                                 style = "-fx-text-fill: part-leaf-color"
                                 graphic = treeItem.graphic
                                 contextMenu = quantityContext
-
                             }
 
                             is BuildSlot -> {
@@ -501,8 +521,6 @@ class Javelin {
             }
             return@Callback cell
         }
-
-
     }
 
     @FXML
@@ -543,11 +561,9 @@ class Javelin {
             jsonReader.close()
             fr.close()
 
-
         } catch (e: IOException) {
             logger.error("addParts - {}", e.message)
         }
-
     }
 
     private fun loadPartTree() {
@@ -637,9 +653,7 @@ class Javelin {
 
             else ->
                 treeItem = TreeItem<Any>(value)
-
         }
-
         return treeItem
     }
 
@@ -662,14 +676,10 @@ class Javelin {
                 }
                 partStage.scene = Scene(partForm)
                 partStage.show()
-
-
             } catch (e: IOException) {
                 labelStatus.text = e.message
                 labelStatus.styleClass.clear()
                 labelStatus.styleClass.add("label-failure")
-
-
             }
         }
 
@@ -724,7 +734,6 @@ class Javelin {
         quantityContext.items.add(partQty)
     }
 
-
     private fun saveParts() {
         val gson = GsonBuilder().setPrettyPrinting().create()
         val file = File(partsFile)
@@ -743,8 +752,6 @@ class Javelin {
             }
             gson.toJson(jsonArray, fw)
             fw.close()
-
-
         } catch (e: IOException) {
             logger.error("saveParts - {}", e.message)
         }
@@ -803,7 +810,6 @@ class Javelin {
                 bw.close()
                 fw.close()
             }
-
         } catch (e: IOException) {
             logger.error("export - {}", e.message)
         }
@@ -827,7 +833,6 @@ class Javelin {
             } else
                 exportTree(childItem, map)
         }
-
     }
 
     private fun updateTotal(part: BuildPart, map: HashMap<String, Int>) {
@@ -835,9 +840,7 @@ class Javelin {
             map[part.code] = map[part.code]!! + part.totalCount
         else
             map[part.code] = part.totalCount
-
     }
-
 
     fun buttonSaveConfigOnAction() {
         val fileChooser = FileChooser()
@@ -885,6 +888,7 @@ class Javelin {
             logger.error("save Tree - {}", e.message)
         }
     }
+
     fun buttonLoadConfigOnAction() {
 
         val fileChooser = FileChooser()
@@ -904,7 +908,6 @@ class Javelin {
     }
 
     private fun readTree(br: BufferedReader, gson: Gson) {
-
         try {
             while (true) {
                 val line = br.readLine()
@@ -922,7 +925,6 @@ class Javelin {
                             buildHashMap[buildPart.code] = partItem
                             val parentItem = buildHashMap[buildPart.parent]
                             parentItem?.children?.add(partItem)
-
                         }
                     } else {
                         val slot = gson.fromJson(line, BuildSlot::class.java)
@@ -938,7 +940,39 @@ class Javelin {
         } catch (e: IOException) {
             logger.error("readTree - {}", e.message)
         }
-
+    }
+    fun buttonPartCollapseOnAction() {
+        if (togglePart.isSelected) {
+            for (item: TreeItem<Any> in partTreeRootItem.children) {
+                item.isExpanded = true
+            }
+            togglePart.text = "collapse"
+        } else {
+            for (item: TreeItem<Any> in partTreeRootItem.children) {
+                item.isExpanded = false
+            }
+            togglePart.text = "expand"
+        }
     }
 
+
+    fun buttonBuildCollapseOnAction() {
+       if (toggleBuild.isSelected) {
+           expandTreeView(buildTreeRootItem, true)
+           toggleBuild.text = "collapse"
+       } else {
+           expandTreeView(buildTreeRootItem, false)
+           toggleBuild.text = "expand"
+       }
+            }
+
+
+    private fun expandTreeView( item: TreeItem<Any>?, expand: Boolean) {
+        if ( item != null && ! item.isLeaf) {
+            item.isExpanded = true
+        }
+        for (child in item?.children!!) {
+            expandTreeView(child, expand)
+        }
+    }
 }
