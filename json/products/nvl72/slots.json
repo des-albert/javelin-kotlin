@@ -1,0 +1,34 @@
+[
+  {
+    "name": "GB300 Compute Racks",
+    "type": "U",
+    "quantity": 0,
+    "description": "NVL72 GB300 Compute Racks",
+    "parts": [
+      "S6C60A"
+    ]
+  },
+  {
+    "name": "build",
+    "type": "U",
+    "quantity": 0,
+    "description": "",
+    "parts": []
+  },
+  {
+    "name": "E1.S NVMe",
+    "type": "M",
+    "quantity": 8,
+    "description": "E1.S NVMWe",
+    "parts": []
+  },
+  {
+    "name": "GB300 Compute Trays",
+    "type": "E",
+    "quantity": 18,
+    "description": "Nvidia GB300 NVL72 Compute Trays",
+    "parts": [
+      "S6C59A"
+    ]
+  }
+]

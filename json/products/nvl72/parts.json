@@ -1,0 +1,32 @@
+[
+  {
+    "code": "S6C59A",
+    "description": "Nvidia GB300 NVL72 by HPE Base Compute Tray - Hybrid",
+    "category": "Compute Tray",
+    "slots": [
+      "E1.S NVMe"
+    ],
+    "hint": "",
+    "od1": true
+  },
+  {
+    "code": "S5T77A",
+    "description": "HPE Rackscale Base System Code",
+    "category": "GB300",
+    "slots": [
+      "GB300 Compute Trays"
+    ],
+    "hint": "",
+    "od1": false
+  },
+  {
+    "code": "S6C60A",
+    "description": "GB300 Base Rack",
+    "category": "GB300",
+    "slots": [
+      "S6C59A"
+    ],
+    "hint": "",
+    "od1": true
+  }
+]

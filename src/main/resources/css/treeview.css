@@ -1,11 +1,12 @@
 .root {
-    -fx-base: rgba(60, 63, 65, 255);
+    -fx-base: #090a08;
 }
 .tree-cell {
-    folder-leaf-color: #364cff;
+    folder-leaf-color: #cc9f25;
     part-leaf-color: rgba(51, 234, 57, 0.87);
     part-link-color: #f12823;
     slot-leaf-color: #ffef6e;
+    -fx-background-color: #090a08;
     -fx-padding: 0px;
     -fx-indent: 8px;
  }

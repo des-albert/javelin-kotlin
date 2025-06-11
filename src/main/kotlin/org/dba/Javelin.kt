@@ -27,6 +27,9 @@ import java.io.IOException
 import java.util.Optional
 import kotlin.collections.HashMap
 
+data class Params(
+    val product: String
+)
 
 class Javelin {
 
@@ -42,8 +45,8 @@ class Javelin {
     lateinit var tabPaneMain: TabPane
     lateinit var labelJDK: Label
 
-    val partsFile = "parts.json"
-    val slotsFile = "slots.json"
+    lateinit var partsFile: String
+    lateinit var slotsFile: String
 
     val folderContext: ContextMenu = ContextMenu()
     val partContext: ContextMenu = ContextMenu()
@@ -536,33 +539,51 @@ class Javelin {
 
 
     private fun addPartsSlots() {
+
         val gson = Gson()
 
         try {
-            var fr = FileReader(partsFile)
-            var jsonReader = JsonReader(fr)
-            jsonReader.beginArray()
-            while (jsonReader.hasNext()) {
-                val part: Part = gson.fromJson(jsonReader, Part::class.java)
-                partHashMap[part.code] = part
-                // logger.info("addParts - hash %d %d part %s".format(part.id, part.code.hashCode(), part.description))
+            FileReader("settings.json").use { fr ->
+                val jsonReader = JsonReader(fr)
+                jsonReader.beginArray()
 
-            }
-            jsonReader.endArray()
-            jsonReader.close()
-            fr.close()
+                while (jsonReader.hasNext()) {
+                    val settings: Params = gson.fromJson(jsonReader, Params::class.java)
+                    partsFile = "json/products/" + settings.product + "/parts.json"
+                    slotsFile = "json/products/" + settings.product + "/slots.json"
+                }
 
-            fr = FileReader(slotsFile)
-            jsonReader = JsonReader(fr)
-            jsonReader.beginArray()
-            while (jsonReader.hasNext()) {
-                val slot: Slot = gson.fromJson(jsonReader, Slot::class.java)
-                slotHashMap[slot.name] = slot
-                // logger.info("addSlots - hash %d %d part %s".format(slot.id, slot.name.hashCode(), slot.description))
+                jsonReader.endArray()
+                jsonReader.close()
+                fr.close()
             }
-            jsonReader.endArray()
-            jsonReader.close()
-            fr.close()
+
+            FileReader(partsFile).use { fr ->
+                val jsonReader = JsonReader(fr)
+                jsonReader.beginArray()
+                while (jsonReader.hasNext()) {
+                    val part: Part = gson.fromJson(jsonReader, Part::class.java)
+                    partHashMap[part.code] = part
+                    // logger.info("addParts - hash %d %d part %s".format(part.id, part.code.hashCode(), part.description))
+
+                }
+                jsonReader.endArray()
+                jsonReader.close()
+                fr.close()
+            }
+
+            FileReader(slotsFile).use { fr ->
+                val jsonReader = JsonReader(fr)
+                jsonReader.beginArray()
+                while (jsonReader.hasNext()) {
+                    val slot: Slot = gson.fromJson(jsonReader, Slot::class.java)
+                    slotHashMap[slot.name] = slot
+                    // logger.info("addSlots - hash %d %d part %s".format(slot.id, slot.name.hashCode(), slot.description))
+                }
+                jsonReader.endArray()
+                jsonReader.close()
+                fr.close()
+            }
 
         } catch (e: IOException) {
             logger.error("addParts - {}", e.message)
@@ -968,7 +989,6 @@ class Javelin {
             }
             jsonReader.endArray()
             jsonReader.close()
-
 
 
         } catch (e: IOException) {

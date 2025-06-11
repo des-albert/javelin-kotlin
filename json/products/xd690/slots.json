@@ -1,0 +1,28 @@
+[
+  {
+    "name": "Granite Rapids CPU",
+    "type": "E",
+    "quantity": 2,
+    "description": "Intel Xeon Granite Rapids CPU",
+    "parts": [
+      "P73834-B21",
+      "P74576-B21"
+    ]
+  },
+  {
+    "name": "build",
+    "type": "U",
+    "quantity": 0,
+    "description": "",
+    "parts": []
+  },
+  {
+    "name": "DDR5-5600 DIMM",
+    "type": "E",
+    "quantity": 32,
+    "description": "DDR5-5600 DIMM",
+    "parts": [
+      "S4J61A"
+    ]
+  }
+]
