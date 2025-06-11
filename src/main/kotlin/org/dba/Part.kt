@@ -6,8 +6,9 @@ data class Part(
     val code: String,
     val description: String,
     val category: String,
+    val slots: ArrayList<String>,
     val hint: String,
-    val slots: ArrayList<String>
+    val od1: Boolean
 ) : Serializable
 
 

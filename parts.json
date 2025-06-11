@@ -3,67 +3,84 @@
     "code": "S4X27A",
     "description": "HPE Cray XD685 1.6TB NVMe Mixed Use E3.S",
     "category": "E3.S NVMe",
+    "slots": [],
     "hint": "1.6 TB MU",
-    "slots": []
+    "od1": true
   },
   {
     "code": "P64986-H21",
     "description": "HPE 64GB Dual Rank x4 DDR5-6400 Smart Memory Kit",
     "category": "DDR5-6400 DIMM",
+    "slots": [],
     "hint": "64 GB DIMM",
-    "slots": []
+    "od1": true
   },
   {
     "code": "P73357-B21",
     "description": "AMD EPYC 9655 2.6GHz 96-core 400W Processor for HPE",
     "category": "AMD Turin CPU",
+    "slots": [],
     "hint": "AMD 9655 96c 2.6G 400W",
-    "slots": []
+    "od1": true
   },
   {
     "code": "P73359-B21",
     "description": "AMD EPYC 9535 2.4GHz 64-core 300W Processor for HPE",
     "category": "AMD Turin CPU",
+    "slots": [],
     "hint": "AMD 9635 64c 2.4G 300W",
-    "slots": []
+    "od1": true
   },
   {
     "code": "P73360-B21",
     "description": "AMD EPYC 9555 3.2GHz 64-core 360W Processor for HPE",
     "category": "AMD Turin CPU",
+    "slots": [],
     "hint": "9555 64c 3.3G 360W",
-    "slots": []
+    "od1": true
   },
   {
     "code": "S4R96A",
     "description": "HPE ProLiant Compute XD685 Direct Liquid Cooling Server",
     "category": "HPE Proliant Compute XD685 Servers",
-    "hint": "AMD 9655",
     "slots": [
       "Turin CPUs",
       "DDR5-6400 DIMMs",
       "NVMe Drive"
-    ]
+    ],
+    "hint": "AMD 9655",
+    "od1": false
   },
   {
     "code": "P64988-H21",
     "description": "HPE 128GB Dual Rank x4 DDR5-6400 Smart Memory Kit",
     "category": "DDR5-6400 DIMM",
+    "slots": [],
     "hint": "128 GB DIMM",
-    "slots": []
+    "od1": true
   },
   {
     "code": "P64987-H21",
     "description": "HPE 96GB Dual Rank x4 DDR5-6400 Smart Memory Kit",
     "category": "DDR5-6400 DIMM",
+    "slots": [],
     "hint": "96 GB DIMM",
-    "slots": []
+    "od1": true
+  },
+  {
+    "code": "S6F53A",
+    "description": "HPE 3.84TB NVMe Read Intensive E1.S ST Self-encrypting Multi Vendor SSD",
+    "category": "E1.S NVMe",
+    "slots": [],
+    "hint": "3.84 TB E1.S",
+    "od1": false
   },
   {
     "code": "P73377-B21",
     "description": "AMD EPYC 9575F 3.0GHz 64-core 320W Processor for HPE",
     "category": "AMD Turin CPU",
+    "slots": [],
     "hint": "AMD 9575F 64c 3.0G 320W",
-    "slots": []
+    "od1": true
   }
 ]

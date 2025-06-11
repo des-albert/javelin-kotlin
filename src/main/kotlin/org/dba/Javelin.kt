@@ -361,7 +361,7 @@ class Javelin {
         slotHashMap["build"] = buildSlot
         val slots = ArrayList<String>()
         slots.add("build")
-        val buildPart = BuildPart("build", "build", "", slots)
+        val buildPart = BuildPart("build", "build", "", slots, false)
 
         buildTreeRootItem = TreeItem<Any>(buildPart)
         treeViewBuild.root = buildTreeRootItem
@@ -808,8 +808,14 @@ class Javelin {
                 for (entry: MutableMap.MutableEntry<String, Int> in exportHash.entries) {
                     val part = buildHashMap[entry.key]?.value as BuildPart
                     val description = part.description
+                    val od1 = part.od1
                     bw.write(entry.value.toString() + "," + "," + entry.key + "," + description)
                     bw.newLine()
+                    if (od1) {
+                        val code = part.code.padEnd(13, ' ') + "0D1"
+                        bw.write(entry.value.toString() + "," + code + "," + "Factory Integrated")
+                        bw.newLine()
+                    }
                 }
 
                 bw.close()
