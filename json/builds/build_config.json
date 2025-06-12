@@ -1,0 +1,95 @@
+[
+  {
+    "code": "build",
+    "description": "build",
+    "category": "",
+    "slots": [
+      "build"
+    ],
+    "od1": false,
+    "parent": "",
+    "buildCount": 0,
+    "totalCount": 0
+  },
+  {
+    "code": "S5T77A",
+    "description": "HPE Rackscale Base System Code",
+    "category": "GB300 Base",
+    "slots": [
+      "GB300 Compute Rack"
+    ],
+    "od1": false,
+    "parent": "build",
+    "buildCount": 1,
+    "totalCount": 1
+  },
+  {
+    "name": "GB300 Compute Rack",
+    "type": "U",
+    "quantity": 0,
+    "description": "NVL72 GB300 Compute Rack",
+    "parts": [
+      "S6C60A"
+    ],
+    "parent": "S5T77A",
+    "content": 22
+  },
+  {
+    "code": "S6C60A",
+    "description": "GB300 Compute Rack",
+    "category": "GB300 Component",
+    "slots": [
+      "GB300 Compute Tray"
+    ],
+    "od1": true,
+    "parent": "GB300 Compute Rack",
+    "buildCount": 22,
+    "totalCount": 22
+  },
+  {
+    "name": "GB300 Compute Tray",
+    "type": "E",
+    "quantity": 18,
+    "description": "NVIDIA GB300 Tray",
+    "parts": [
+      "S6C59A"
+    ],
+    "parent": "S6C60A",
+    "content": 18
+  },
+  {
+    "code": "S6C59A",
+    "description": "Nvidia GB300 NVL72 by HPE Base Compute Tray - Hybrid",
+    "category": "Compute Tray",
+    "slots": [
+      "E1.S NVMe",
+      "DPU"
+    ],
+    "od1": true,
+    "parent": "GB300 Compute Tray",
+    "buildCount": 18,
+    "totalCount": 396
+  },
+  {
+    "name": "E1.S NVMe",
+    "type": "M",
+    "quantity": 8,
+    "description": "E1.S NVMWe",
+    "parts": [
+      "S6F53A",
+      "S6F54A"
+    ],
+    "parent": "S6C59A",
+    "content": 4
+  },
+  {
+    "code": "S6F53A",
+    "description": "HPE 3.84TB NVMe RI E1.S ST SED MV SSD",
+    "category": "E1.S NVMe",
+    "slots": [],
+    "od1": true,
+    "parent": "E1.S NVMe",
+    "buildCount": 4,
+    "totalCount": 1584
+  }
+]

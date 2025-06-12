@@ -1,10 +1,27 @@
 [
   {
+    "code": "S6F54A",
+    "description": "HPE 7.68TB NVMe RI E1.S ST SED MV SSD",
+    "category": "E1.S NVMe",
+    "slots": [],
+    "hint": "7.68 TB SSD",
+    "od1": true
+  },
+  {
+    "code": "S6F44A",
+    "description": "Nvidia BF3 3240 DPU (AC)",
+    "category": "BF3 DPU",
+    "slots": [],
+    "hint": "Nvidia 3240 ",
+    "od1": true
+  },
+  {
     "code": "S6C59A",
     "description": "Nvidia GB300 NVL72 by HPE Base Compute Tray - Hybrid",
     "category": "Compute Tray",
     "slots": [
-      "E1.S NVMe"
+      "E1.S NVMe",
+      "DPU"
     ],
     "hint": "",
     "od1": true
@@ -12,19 +29,27 @@
   {
     "code": "S5T77A",
     "description": "HPE Rackscale Base System Code",
-    "category": "GB300",
+    "category": "GB300 Base",
     "slots": [
-      "GB300 Compute Trays"
+      "GB300 Compute Rack"
     ],
     "hint": "",
     "od1": false
   },
   {
+    "code": "S6F53A",
+    "description": "HPE 3.84TB NVMe RI E1.S ST SED MV SSD",
+    "category": "E1.S NVMe",
+    "slots": [],
+    "hint": "3.84 TB SSD",
+    "od1": true
+  },
+  {
     "code": "S6C60A",
-    "description": "GB300 Base Rack",
-    "category": "GB300",
+    "description": "GB300 Compute Rack",
+    "category": "GB300 Component",
     "slots": [
-      "S6C59A"
+      "GB300 Compute Tray"
     ],
     "hint": "",
     "od1": true

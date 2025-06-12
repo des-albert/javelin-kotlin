@@ -1,32 +1,46 @@
 [
   {
-    "name": "GB300 Compute Racks",
-    "type": "U",
-    "quantity": 0,
-    "description": "NVL72 GB300 Compute Racks",
+    "name": "build",
+    "type": "E",
+    "quantity": 1,
+    "description": "Build",
     "parts": [
-      "S6C60A"
+      "S5T77A"
     ]
   },
   {
-    "name": "build",
-    "type": "U",
-    "quantity": 0,
-    "description": "",
-    "parts": []
+    "name": "DPU",
+    "type": "M",
+    "quantity": 1,
+    "description": "Nvidia DPU",
+    "parts": [
+      "S6F44A"
+    ]
   },
   {
     "name": "E1.S NVMe",
     "type": "M",
     "quantity": 8,
     "description": "E1.S NVMWe",
-    "parts": []
+    "parts": [
+      "S6F53A",
+      "S6F54A"
+    ]
   },
   {
-    "name": "GB300 Compute Trays",
+    "name": "GB300 Compute Rack",
+    "type": "U",
+    "quantity": 0,
+    "description": "NVL72 GB300 Compute Rack",
+    "parts": [
+      "S6C60A"
+    ]
+  },
+  {
+    "name": "GB300 Compute Tray",
     "type": "E",
     "quantity": 18,
-    "description": "Nvidia GB300 NVL72 Compute Trays",
+    "description": "NVIDIA GB300 Tray",
     "parts": [
       "S6C59A"
     ]

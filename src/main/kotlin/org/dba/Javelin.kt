@@ -359,9 +359,8 @@ class Javelin {
     // Build treeView
 
     fun defineBuildTreeView() {
-        val parts = ArrayList<String>()
-        val buildSlot = Slot("build", "U", 0, "", parts)
-        slotHashMap["build"] = buildSlot
+
+
         val slots = ArrayList<String>()
         slots.add("build")
         val buildPart = BuildPart("build", "build", "", slots, false)
@@ -433,13 +432,16 @@ class Javelin {
 
                     when (target) {
                         is BuildPart -> {
+                            val baseSlot = slotHashMap["build"]
                             val targetPart: BuildPart = target
-                            var addQty = 0
-                            val countDialog = TextInputDialog()
-                            countDialog.headerText = "enter part quantity : "
-                            val addCount: Optional<String> = countDialog.showAndWait()
-                            if (addCount.isPresent)
-                                addQty = addCount.get().toInt()
+                            var addQty = 1
+                            if (baseSlot?.type == "U") {
+                                val countDialog = TextInputDialog()
+                                countDialog.headerText = "enter part quantity : "
+                                val addCount: Optional<String> = countDialog.showAndWait()
+                                if (addCount.isPresent)
+                                    addQty = addCount.get().toInt()
+                            }
                             val addPart = BuildPart(part)
                             addPart.buildCount = addQty
                             addPart.totalCount = addQty
