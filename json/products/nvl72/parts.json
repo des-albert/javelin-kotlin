@@ -1,5 +1,13 @@
 [
   {
+    "code": "S5R45A",
+    "description": "HPE 44U Manifold Top Feed for NVIDIA GB200 NVL72",
+    "category": "Manifold",
+    "slots": [],
+    "hint": "",
+    "od1": true
+  },
+  {
     "code": "S6F54A",
     "description": "HPE 7.68TB NVMe RI E1.S ST SED MV SSD",
     "category": "E1.S NVMe",
@@ -27,11 +35,28 @@
     "od1": true
   },
   {
+    "code": "S6F61A",
+    "description": "Nvidia SN2201 ToR Switch",
+    "category": "Switch",
+    "slots": [],
+    "hint": "",
+    "od1": true
+  },
+  {
+    "code": "S6F62A",
+    "description": "Power Whip 400V 1.5m",
+    "category": "Power",
+    "slots": [],
+    "hint": "",
+    "od1": true
+  },
+  {
     "code": "S5T77A",
     "description": "HPE Rackscale Base System Code",
     "category": "GB300 Base",
     "slots": [
-      "GB300 Compute Rack"
+      "GB300 Compute Rack",
+      "S6F21A"
     ],
     "hint": "",
     "od1": false
@@ -45,11 +70,40 @@
     "od1": true
   },
   {
+    "code": "S6E21A",
+    "description": "Nvidia NVL72 Power Shelf Kit - AC",
+    "category": "Power",
+    "slots": [],
+    "hint": "NVL72 Power Shelf",
+    "od1": true
+  },
+  {
+    "code": "S6F64A",
+    "description": "Power Whip 400v 3.5m",
+    "category": "Power",
+    "slots": [],
+    "hint": "",
+    "od1": true
+  },
+  {
+    "code": "S5R46A",
+    "description": "HPE 44U Manifold Bottom Feed for NVIDIA GB200 NVL72",
+    "category": "Manifold",
+    "slots": [],
+    "hint": "",
+    "od1": true
+  },
+  {
     "code": "S6C60A",
     "description": "GB300 Compute Rack",
     "category": "GB300 Component",
     "slots": [
-      "GB300 Compute Tray"
+      "GB300 Compute Tray",
+      "Power Shelf",
+      "Top Power Whip",
+      "Bottom Power Whip",
+      "ToR Switch",
+      "Manifold"
     ],
     "hint": "",
     "od1": true

@@ -16,7 +16,8 @@
     "description": "HPE Rackscale Base System Code",
     "category": "GB300 Base",
     "slots": [
-      "GB300 Compute Rack"
+      "GB300 Compute Rack",
+      "S6F21A"
     ],
     "od1": false,
     "parent": "build",
@@ -32,19 +33,24 @@
       "S6C60A"
     ],
     "parent": "S5T77A",
-    "content": 22
+    "content": 2
   },
   {
     "code": "S6C60A",
     "description": "GB300 Compute Rack",
     "category": "GB300 Component",
     "slots": [
-      "GB300 Compute Tray"
+      "GB300 Compute Tray",
+      "Power Shelf",
+      "Top Power Whip",
+      "Bottom Power Whip",
+      "ToR Switch",
+      "Manifold"
     ],
     "od1": true,
     "parent": "GB300 Compute Rack",
-    "buildCount": 22,
-    "totalCount": 22
+    "buildCount": 4,
+    "totalCount": 4
   },
   {
     "name": "GB300 Compute Tray",
@@ -68,7 +74,7 @@
     "od1": true,
     "parent": "GB300 Compute Tray",
     "buildCount": 18,
-    "totalCount": 396
+    "totalCount": 72
   },
   {
     "name": "E1.S NVMe",
@@ -90,6 +96,133 @@
     "od1": true,
     "parent": "E1.S NVMe",
     "buildCount": 4,
-    "totalCount": 1584
+    "totalCount": 288
+  },
+  {
+    "name": "DPU",
+    "type": "M",
+    "quantity": 1,
+    "description": "Nvidia DPU",
+    "parts": [
+      "S6F44A"
+    ],
+    "parent": "S6C59A",
+    "content": 1
+  },
+  {
+    "code": "S6F44A",
+    "description": "Nvidia BF3 3240 DPU (AC)",
+    "category": "BF3 DPU",
+    "slots": [],
+    "od1": true,
+    "parent": "DPU",
+    "buildCount": 1,
+    "totalCount": 72
+  },
+  {
+    "name": "Power Shelf",
+    "type": "M",
+    "quantity": 8,
+    "description": "Nvidia NVL72 Power Shelf Kit - AC",
+    "parts": [
+      "S6E21A"
+    ],
+    "parent": "S6C60A",
+    "content": 8
+  },
+  {
+    "code": "S6E21A",
+    "description": "Nvidia NVL72 Power Shelf Kit - AC",
+    "category": "Power",
+    "slots": [],
+    "od1": true,
+    "parent": "Power Shelf",
+    "buildCount": 8,
+    "totalCount": 32
+  },
+  {
+    "name": "Top Power Whip",
+    "type": "M",
+    "quantity": 4,
+    "description": "NVL72 Power Whip",
+    "parts": [
+      "S6F62A"
+    ],
+    "parent": "S6C60A",
+    "content": 4
+  },
+  {
+    "code": "S6F62A",
+    "description": "Power Whip 400V 1.5m",
+    "category": "Power",
+    "slots": [],
+    "od1": true,
+    "parent": "Top Power Whip",
+    "buildCount": 4,
+    "totalCount": 16
+  },
+  {
+    "name": "Bottom Power Whip",
+    "type": "M",
+    "quantity": 4,
+    "description": "NVL72 Power Whip",
+    "parts": [
+      "S6F64A"
+    ],
+    "parent": "S6C60A",
+    "content": 4
+  },
+  {
+    "code": "S6F64A",
+    "description": "Power Whip 400v 3.5m",
+    "category": "Power",
+    "slots": [],
+    "od1": true,
+    "parent": "Bottom Power Whip",
+    "buildCount": 4,
+    "totalCount": 16
+  },
+  {
+    "name": "ToR Switch",
+    "type": "E",
+    "quantity": 2,
+    "description": "NVIDIA SN2201 ToR Switch",
+    "parts": [
+      "S6F61A"
+    ],
+    "parent": "S6C60A",
+    "content": 2
+  },
+  {
+    "code": "S6F61A",
+    "description": "Nvidia SN2201 ToR Switch",
+    "category": "Switch",
+    "slots": [],
+    "od1": true,
+    "parent": "ToR Switch",
+    "buildCount": 2,
+    "totalCount": 8
+  },
+  {
+    "name": "Manifold",
+    "type": "E",
+    "quantity": 1,
+    "description": "NVL72 Manifoild",
+    "parts": [
+      "S5R45A",
+      "S5R46A"
+    ],
+    "parent": "S6C60A",
+    "content": 1
+  },
+  {
+    "code": "S5R45A",
+    "description": "HPE 44U Manifold Top Feed for NVIDIA GB200 NVL72",
+    "category": "Manifold",
+    "slots": [],
+    "od1": true,
+    "parent": "Manifold",
+    "buildCount": 1,
+    "totalCount": 4
   }
 ]

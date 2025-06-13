@@ -403,7 +403,7 @@ class Javelin {
                                     toolText = StringBuilder("exact - " + slot.quantity)
                                 else if (slot.type == "M")
                                     toolText = StringBuilder("max - " + slot.quantity)
-                                toolText.append("current - ")
+                                toolText.append(" current - ")
                                 toolText.append(slot.content)
                                 toolText.append("\n")
                                 for (code in parts) {
@@ -433,43 +433,47 @@ class Javelin {
                     when (target) {
                         is BuildPart -> {
                             val baseSlot = slotHashMap["build"]
-                            val targetPart: BuildPart = target
-                            var addQty = 1
-                            if (baseSlot?.type == "U") {
-                                val countDialog = TextInputDialog()
-                                countDialog.headerText = "enter part quantity : "
-                                val addCount: Optional<String> = countDialog.showAndWait()
-                                if (addCount.isPresent)
-                                    addQty = addCount.get().toInt()
-                            }
-                            val addPart = BuildPart(part)
-                            addPart.buildCount = addQty
-                            addPart.totalCount = addQty
-                            addPart.parent = targetPart.code
-                            val partTreeItem = newTreeItem(addPart)
-                            buildHashMap[part.code] = partTreeItem
-                            buildTreeRootItem.children.add(partTreeItem)
+                            if (baseSlot?.parts?.contains(part.code) == true) {
 
-                            if (!addPart.slots.isEmpty()) {
-                                for (slotName: String in addPart.slots) {
-                                    val slot = slotHashMap[slotName]
-                                    val addSlot = BuildSlot(slot!!)
-                                    addSlot.parent = addPart.code
-                                    val slotTreeItem = newTreeItem(addSlot)
-                                    buildHashMap[slotName] = slotTreeItem
-                                    partTreeItem.children.add(slotTreeItem)
+                                val targetPart: BuildPart = target
+                                var addQty = 1
+                                if (baseSlot.type == "U") {
+                                    val countDialog = TextInputDialog()
+                                    countDialog.headerText = "enter part quantity : "
+                                    val addCount: Optional<String> = countDialog.showAndWait()
+                                    if (addCount.isPresent)
+                                        addQty = addCount.get().toInt()
                                 }
-                                labelStatus.text = "$addQty ${addPart.code} parts added to base"
-                                labelStatus.styleClass.clear()
-                                labelStatus.styleClass.add("label-success")
+                                val addPart = BuildPart(part)
+                                addPart.buildCount = addQty
+                                addPart.totalCount = addQty
+                                addPart.parent = targetPart.code
+                                val partTreeItem = newTreeItem(addPart)
+                                buildHashMap[part.code] = partTreeItem
+                                buildTreeRootItem.children.add(partTreeItem)
+
+                                if (!addPart.slots.isEmpty()) {
+                                    for (slotName: String in addPart.slots) {
+                                        val slot = slotHashMap[slotName]
+                                        val addSlot = BuildSlot(slot!!)
+                                        addSlot.parent = addPart.code
+                                        val slotTreeItem = newTreeItem(addSlot)
+                                        buildHashMap[slotName] = slotTreeItem
+                                        partTreeItem.children.add(slotTreeItem)
+                                    }
+                                    labelStatus.text = "$addQty ${addPart.code} parts added to base"
+                                    labelStatus.styleClass.clear()
+                                    labelStatus.styleClass.add("label-success")
+                                }
                             }
+
                         }
 
                         // Add Part to Slot
 
                         is BuildSlot -> {
                             val targetSlot: BuildSlot = target
-                            if (!targetSlot.parts.isEmpty()) {
+                            if (!targetSlot.parts.isEmpty() && targetSlot.content == 0) {
                                 val slotParts = targetSlot.parts
                                 if (slotParts.contains(part.code)) {
                                     var addQty = 0
@@ -515,11 +519,15 @@ class Javelin {
                                             }
 
                                         }
-                                        labelStatus.text = "$addQty parts added to slot ${targetSlot.name}"
+                                        labelStatus.text = "$addQty ${addPart.code} parts added to slot ${targetSlot.name}"
                                         labelStatus.styleClass.clear()
                                         labelStatus.styleClass.add("label-success")
                                     }
                                 }
+                            } else {
+                                labelStatus.text = "part ${part.code} cannot be added to slot ${targetSlot.name}"
+                                labelStatus.styleClass.clear()
+                                labelStatus.styleClass.add("label-failure")
                             }
                         }
                     }
@@ -683,7 +691,7 @@ class Javelin {
         return treeItem
     }
 
-    // Context Menus
+// Context Menus
 
     private fun addContext() {
 
@@ -829,7 +837,8 @@ class Javelin {
                 exportTree(buildTreeRootItem, exportHash)
 
                 for (entry: MutableMap.MutableEntry<String, Int> in exportHash.entries) {
-                    val part = buildHashMap[entry.key]?.value as BuildPart
+                    val partItem = buildHashMap[entry.key]
+                    val part = partItem!!.value as BuildPart
                     val description = part.description
                     val od1 = part.od1
                     bw.write(entry.value.toString() + "," + entry.key + "," + description)
