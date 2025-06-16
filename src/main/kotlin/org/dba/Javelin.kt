@@ -16,16 +16,22 @@ import javafx.scene.input.*
 import javafx.stage.FileChooser
 import javafx.stage.Stage
 import javafx.util.Callback
+import org.apache.poi.ss.usermodel.HorizontalAlignment
+import org.apache.poi.xssf.usermodel.XSSFCell
+import org.apache.poi.xssf.usermodel.XSSFCellStyle
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.File
+import java.io.FileOutputStream
 import java.io.FileReader
 import java.io.FileWriter
 import java.io.IOException
 import java.util.Optional
 import kotlin.collections.HashMap
+import kotlin.collections.mutableListOf
 
 data class Params(
     val product: String
@@ -816,11 +822,14 @@ class Javelin {
     }
 
     fun buttonExportOnAction() {
-        val exportHash: HashMap<String, Int> = HashMap()
+        val exportList = mutableListOf<BuildPart>()
+        val workbook = XSSFWorkbook()
+        val sheet = workbook.createSheet("export")
+
         try {
             val fileChooser = FileChooser()
-            fileChooser.extensionFilters.add(FileChooser.ExtensionFilter("csv file (*.csv)", "*.csv"))
-            fileChooser.title = "save config as csv file"
+            fileChooser.extensionFilters.add(FileChooser.ExtensionFilter("Excel Files", "*.xlsx"))
+            fileChooser.title = "save config as X file"
             val exportFile = fileChooser.showSaveDialog(tabPaneMain.scene.window)
             if (exportFile.exists()) {
                 if (!exportFile.delete()) {
@@ -831,27 +840,47 @@ class Javelin {
             }
             if (exportFile.createNewFile()) {
 
-                val fw = FileWriter(exportFile)
-                val bw = BufferedWriter(fw)
+                lateinit var cell: XSSFCell
 
-                exportTree(buildTreeRootItem, exportHash)
+                exportList.clear()
+                exportTree(buildTreeRootItem, exportList)
 
-                for (entry: MutableMap.MutableEntry<String, Int> in exportHash.entries) {
-                    val partItem = buildHashMap[entry.key]
-                    val part = partItem!!.value as BuildPart
-                    val description = part.description
+                val centeredStyle: XSSFCellStyle = workbook.createCellStyle()
+                centeredStyle.alignment = HorizontalAlignment.CENTER
+
+                var rowIndex = 0
+                exportList.forEach { part ->
                     val od1 = part.od1
-                    bw.write(entry.value.toString() + "," + entry.key + "," + description)
-                    bw.newLine()
-                    if (od1) {
-                        val code = part.code.padEnd(13, ' ') + "0D1"
-                        bw.write(entry.value.toString() + "," + code + "," + "Factory Integrated")
-                        bw.newLine()
-                    }
-                }
+                    if (part.totalCount > 0) {
+                        var row = sheet.createRow(rowIndex)
+                        cell = row.createCell(0)
+                        cell.setCellValue(part.totalCount.toString())
+                        cell.cellStyle = centeredStyle
+                        cell = row.createCell(1)
+                        cell.setCellValue(part.code)
+                        cell = row.createCell(2)
+                        cell.setCellValue(part.description)
+                        rowIndex++
+                        if (od1) {
+                            row = sheet.createRow(rowIndex)
+                            val code = part.code.padEnd(13, ' ') + "0D1"
+                            cell = row.createCell(0)
+                            cell.setCellValue(part.totalCount.toString())
+                            cell.cellStyle = centeredStyle
+                            cell = row.createCell(1)
+                            cell.setCellValue(code)
+                            cell = row.createCell(2)
+                            cell.setCellValue("Factory Integrated")
+                            rowIndex++
+                        }
 
-                bw.close()
-                fw.close()
+                    }
+
+
+                }
+                val outputStream = FileOutputStream(exportFile)
+                workbook.write(outputStream)
+                workbook.close()
             }
             labelFileStatus.text = "file exported to $exportFile"
             labelFileStatus.styleClass.clear()
@@ -862,32 +891,19 @@ class Javelin {
         }
     }
 
-    private fun exportTree(item: TreeItem<Any>, map: HashMap<String, Int>) {
-        val value = item.value
-        if (value is BuildPart) {
-            val part: BuildPart = value
-            if (part.totalCount > 0)
-                updateTotal(part, map)
+    private fun exportTree(item: TreeItem<Any>, list:  MutableList<BuildPart>) {
+
+        if (item.value is BuildPart) {
+            item.value?.let {
+                list.add(it as BuildPart)
+            }
         }
 
         for (childItem: TreeItem<Any> in item.children) {
-            if (childItem.children.isEmpty()) {
-                val childValue = childItem.value
-                if (childValue is BuildPart) {
-                    val part = childValue
-                    updateTotal(part, map)
-                }
-            } else
-                exportTree(childItem, map)
+                exportTree(childItem, list)
         }
     }
 
-    private fun updateTotal(part: BuildPart, map: HashMap<String, Int>) {
-        if (map.containsKey(part.code))
-            map[part.code] = map[part.code]!! + part.totalCount
-        else
-            map[part.code] = part.totalCount
-    }
 
     fun buttonSaveConfigOnAction() {
         val fileChooser = FileChooser().apply {
