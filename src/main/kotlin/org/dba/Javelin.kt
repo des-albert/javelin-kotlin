@@ -823,13 +823,13 @@ class Javelin {
 
     fun buttonExportOnAction() {
         val exportList = mutableListOf<BuildPart>()
-        val workbook = XSSFWorkbook()
-        val sheet = workbook.createSheet("export")
 
         try {
+            val workbook = XSSFWorkbook()
+            val sheet = workbook.createSheet("export")
             val fileChooser = FileChooser()
             fileChooser.extensionFilters.add(FileChooser.ExtensionFilter("Excel Files", "*.xlsx"))
-            fileChooser.title = "save config as X file"
+            fileChooser.title = "save config as .xlsx file"
             val exportFile = fileChooser.showSaveDialog(tabPaneMain.scene.window)
             if (exportFile.exists()) {
                 if (!exportFile.delete()) {
@@ -873,10 +873,7 @@ class Javelin {
                             cell.setCellValue("Factory Integrated")
                             rowIndex++
                         }
-
                     }
-
-
                 }
                 val outputStream = FileOutputStream(exportFile)
                 workbook.write(outputStream)
